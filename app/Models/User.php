@@ -14,13 +14,27 @@ class User extends Model
 	protected $returnType           = 'array';
 	protected $useSoftDeletes       = false;
 	protected $protectFields        = true;
-	protected $allowedFields        = [];
+	protected $allowedFields        = [
+		'username',
+		'password',
+		'nama',
+		'no_telp',
+		'id_user_role',
+		'email',
+		'status',
+		'jml_login',
+		'pwd_created',
+		'pwd_exp',
+		'created_by',
+		'modified_by',
+		'approved_by'
+	];
 
 	// Dates
-	protected $useTimestamps        = false;
+	protected $useTimestamps        = true;
 	protected $dateFormat           = 'datetime';
 	protected $createdField         = 'created_at';
-	protected $updatedField         = 'updated_at';
+	protected $updatedField         = 'modified_at';
 	protected $deletedField         = 'deleted_at';
 
 	// Validation

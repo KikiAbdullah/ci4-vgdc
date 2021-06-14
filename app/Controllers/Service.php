@@ -270,8 +270,8 @@ class Service extends BaseController
 	// data tabel handling	
 	public function get_list_report()
 	{
-		// INI BELUM
-		$this->m_transaksi->select('transaksi.*,  transaksi.id_trx, layanan.nm_layanan,  timediff(wkt_selesai, wkt_mulai) as waktu, gdc.lokasi, gdc.nm_gdc, jenis_driver.nm_jenis, tipe_driver.nm_tipe, csat.gambar, nm_driver, tanggal, tipe_driver.nm_tipe, wkt_mulai, wkt_selesai, sessionid, sts_trx ', false)
+		$db = db_connect();
+		$builder = $db->table('transaksi')->select('transaksi.*,  transaksi.id_trx, layanan.nm_layanan,  timediff(wkt_selesai, wkt_mulai) as waktu, gdc.lokasi, gdc.nm_gdc, jenis_driver.nm_jenis, tipe_driver.nm_tipe, csat.gambar, nm_driver, tanggal, tipe_driver.nm_tipe, wkt_mulai, wkt_selesai, sessionid, sts_trx ')
 			->join('layanan', 'transaksi.id_layanan = layanan.id_layanan', 'left')
 			->join('gdc', 'transaksi.id_gdc = gdc.id_gdc', 'left')
 			->join('jenis_driver', 'transaksi.id_jenis = jenis_driver.id_jenis', 'left')
@@ -282,23 +282,17 @@ class Service extends BaseController
 
 		$filter = $this->session->get('filter');
 		if (!empty($filter['tanggal_awal']) && !empty($filter['tanggal_akhir'])) {
-			$where_filter = array(
-				'date(tanggal) >=' => date('Y-m-d', strtotime($filter['tanggal_awal'])),
-				'date(tanggal) <=' => date('Y-m-d', strtotime($filter['tanggal_akhir']))
-			);
-			$this->m_transaksi->where($where_filter);
+			$builder = $builder->where('date(tanggal) >=', date('Y-m-d', strtotime($filter['tanggal_awal'])))
+				->where('date(tanggal) <=', date('Y-m-d', strtotime($filter['tanggal_akhir'])));
 		}
+
 
 		if (!empty($filter['id_layanan'])) {
-			$where_id = array(
-				'transaksi.id_layanan' => $filter['id_layanan']
-			);
-			$this->m_transaksi->where($where_id);
+			$builder = $builder->where('transaksi.id_layanan', $filter['id_layanan']);
 		}
 
-		$data = $this->m_transaksi->findAll();
 
-		return DataTable::of($data)
+		return DataTable::of($builder)
 			->toJson();
 	}
 
@@ -832,17 +826,17 @@ class Service extends BaseController
 	public function get_list_dashboard()
 	{
 		// INI BELUM
-		// $data = $this->m_transaksi->join('layanan', 'transaksi.id_layanan ', '=', ' layanan.id_layanan', 'left')
-		// 	->join('gdc', 'transaksi.id_gdc ', '=', ' gdc.id_gdc', 'left')
-		// 	->join('jenis_driver', 'transaksi.id_jenis ', '=', ' jenis_driver.id_jenis', 'left')
-		// 	->join('tipe_driver', 'transaksi.id_tipe ', '=', ' tipe_driver.id_tipe', 'left')
-		// 	->join('csat', 'transaksi.id_csat ', '=', ' csat.id_csat', 'left')
+		// $data = $this->m_transaksi->join('layanan', 'transaksi.id_layanan = layanan.id_layanan', 'left')
+		// 	->join('gdc', 'transaksi.id_gdc = gdc.id_gdc', 'left')
+		// 	->join('jenis_driver', 'transaksi.id_jenis = jenis_driver.id_jenis', 'left')
+		// 	->join('tipe_driver', 'transaksi.id_tipe = tipe_driver.id_tipe', 'left')
+		// 	->join('csat', 'transaksi.id_csat = csat.id_csat', 'left')
 		// 	->where('sts_trx', 1)
 		// 	->where('tanggal', date('Y-m-d'))
 		// 	->orderBy('tanggal', 'desc')
 		// 	->orderBy('wkt_mulai', 'desc')
-		// 	->selectRaw('transaksi.*', 'transaksi.id_trx', 'layanan.nm_layanan', 'timediff(wkt_selesai, wkt_mulai) as waktu', 'gdc.lokasi', 'gdc.nm_gdc', 'jenis_driver.nm_jenis', 'tipe_driver.nm_tipe', 'csat.gambar', 'nm_driver', 'tanggal', 'tipe_driver.nm_tipe', 'wkt_mulai', 'wkt_selesai', 'sessionid', 'sts_trx')
-		// 	->get();
+		// 	->select('transaksi.*', 'transaksi.id_trx', 'layanan.nm_layanan', 'timediff(wkt_selesai, wkt_mulai) as waktu', 'gdc.lokasi', 'gdc.nm_gdc', 'jenis_driver.nm_jenis', 'tipe_driver.nm_tipe', 'csat.gambar', 'nm_driver', 'tanggal', 'tipe_driver.nm_tipe', 'wkt_mulai', 'wkt_selesai', 'sessionid', 'sts_trx')
+		// 	->findAll();
 
 		// return DataTables::of($data)
 		// 	->make(true);
@@ -903,6 +897,461 @@ class Service extends BaseController
 			}
 		} else {
 			abort(404);
+		}
+	}
+
+	public function update_selesai()
+	{
+		$id_trx = @$_REQUEST['id_trx'];
+		$sts = 2;
+
+		$data = $this->m_transaksi->where('id_trx', $id_trx)
+			->where('tanggal', date('Y-m-d'))
+			->where('sts_trx', $sts)
+			->first()['id_trx'];
+
+		if (!empty($data)) {
+
+			if ($this->stop_record($data)) {
+				$param = [
+					'sts_trx' => 3,
+					'wkt_selesai' => date('H:i:s')
+				];
+
+				$update = $this->m_transaksi->update($id_trx, $param);
+
+				echo json_encode(array('status' => 'sukses', 'data' => $data));
+			}
+		} else {
+		}
+	}
+
+	public function get_token_api($gdc = '')
+	{
+		$url = 'https://api-meetmax.xcally.com/api/v1/accounts/login';
+		$data = array('email' => $gdc->email_gdc, 'password' => $gdc->password);
+
+		// use key 'http' even if you send the request to https://...
+		$options = array(
+			'http' => array(
+				'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+				'method'  => 'POST',
+				'content' => http_build_query($data)
+			)
+		);
+		$context  = stream_context_create($options);
+		$result = file_get_contents($url, false, $context);
+		if ($result === FALSE) {
+			/* Handle error */
+			return false;
+		} else {
+
+			$result = json_decode($result);
+			return @$result->access_token;
+		}
+	}
+
+	public function stop_record($id_trx = '')
+	{
+		$data = $this->m_transaksi->find($id_trx);
+
+		if (!empty($data)) {
+			$gdc = $this->gdc->find($data['id_gdc']);
+
+			if (get_tipe() == 'local') {
+				$token = $this->get_token_api($gdc);
+				$token_str = "Authorization: Bearer " . $token . "\r\n" .
+					"x-api-key: " . $gdc['apikey'] . "\r\n";
+			} else {
+				$token_str = "X-APIKEY: " . $gdc['apikey'] . "\r\n";
+			}
+
+			$token_x = 'b2904ce8b97f4b736a435e71ff552f71dfd37f5597ec0f598e';
+			$url = 'https://api-vidaoo.xcally.com/api/v1/recordings/' . $data['recordingid'] . '/stop';
+			$data = array();
+
+			// use key 'http' even if you send the request to https://...
+			$options = array(
+				'http' => array(
+					'header'  => "Content-type: application/json\r\n" .
+						$token_str,
+					'method'  => 'POST',
+					'content' => http_build_query($data)
+				)
+			);
+			$context  = stream_context_create($options);
+			$result = file_get_contents($url, false, $context);
+			if ($result === FALSE) {
+				/* Handle error */
+				return false;
+			} else {
+				return true;
+			}
+		}
+	}
+
+	public function update_batal()
+	{
+		$id_trx = @$_REQUEST['id_trx'];
+		$hayo = @$_REQUEST['hayo'];
+
+		if (decode($hayo) == hayo()) {
+
+			$sts = 1;
+			$data = $this->m_transaksi->where('id_trx', $id_trx)
+				->where('tanggal', date('Y-m-d'))
+				->where('sts_trx', $sts)->first()['id_trx'];
+
+			return json_encode(array('status' => 'sukses', 'data' => $data));
+
+			if (!empty($data)) {
+				$param = [
+					'sts_trx' => 4,
+					'wkt_selesai' => date('H:i:s')
+				];
+
+				$update = $this->m_transaksi->update($data, $param);
+			} else {
+			}
+		} else {
+			abort(404);
+		}
+	}
+
+	public function update_csat()
+	{
+
+		$id_trx = @$_REQUEST['id_trx'];
+		$csat = @$_REQUEST['csat'];
+		$hayo = @$_REQUEST['hayo'];
+
+		if (decode($hayo) == hayo()) {
+			$sts = 3;
+			$data = $this->m_transaksi->where('id_trx', $id_trx)
+				->where('tanggal', date('Y-m-d'))
+				->where('sts_trx', $sts)
+				->first()['id_trx'];
+
+			echo json_encode(array('status' => 'sukses', 'data' => $data));
+
+			if (!empty($data)) {
+				$param = ['id_csat' => $csat];
+				$trx = $this->m_transaksi->update($data, $param);
+			}
+		} else {
+			abort(404);
+		}
+	}
+
+	// INI BELUM
+	// public function konversi_pdf($nama_file, $file_ext)
+	// {
+	//     $pdf = new FPDF('p', 'mm', 'A4');
+	//     $pdf->AddPage();
+	//     $pdf->Image(base_url('uploads/file/' . $nama_file));
+	//     $pdf->Output(base_url('uploads/file/a'));
+	//     // $pdf->Output('F',str_replace('\\', '/', FCPATH . str_replace('./', '', './uploads/file/')). substr($nama_file,0, strpos($nama_file, $file_ext)).'.pdf');
+	//     return true;
+	// }
+
+
+	public function upload_file_ns()
+	{
+		$id_trx = @$_REQUEST['id_trx'];
+		$id_dok = @$_REQUEST['id_dok'];
+		//$sessionid = @$_REQUEST['sessionid'];
+		$hayo = @$_REQUEST['hayo'];
+
+		if (decode($hayo) == hayo()) {
+
+			$file_name = $_FILES['file']['name'];
+
+			if (!empty($file_name)) {
+
+				$config['upload_path'] = 'uploads/file';
+				$config['allowed_types'] = '*';
+
+				$new_name = $file_name;
+				$config['file_name'] = $new_name;
+
+				$this->load->library('upload', $config);
+				$this->upload->initialize($config);
+
+				if (!$this->upload->do_upload('file')) {
+
+					echo json_encode(array('status' => 'gagal', 'msg' => 'upload file gagal'));
+				} else {
+					$dataFile  = $this->upload->data();
+					$file_name = $dataFile['file_name'];
+					//$this->encrypt_file("./uploads/file/".$file_name, "./uploads/file/".$file_name, 'jos');					
+					$detail = $this->m_file->where('id_trx', $id_trx)
+						->where('id_dok', $id_dok)
+						->findAll();
+
+					if (!empty($detail)) {
+						$file = $this->m_file->where('id_trx', $id_trx)
+							->where('id_dok', $id_dok)
+							->findAll();
+						$file->attach = $file_name;
+						$file->save();
+					} else {
+						$param = [
+							'id_trx' => $id_trx,
+							'id_dok' => $id_dok,
+							'attach' => $file_name,
+						];
+
+						$result = $this->m_file->insert($param);
+					}
+
+					if ($result) {
+						echo json_encode(array('status' => 'sukses'));
+					} else {
+						echo json_encode(array('status' => 'gagal', 'msg' => 'gagal update data'));
+					}
+				}
+			} else {
+				echo json_encode(array('status' => 'gagal', 'msg' => 'File Not Found '));
+			}
+		} else {
+			abort(404);
+		}
+	}
+
+
+	public function view_dokumen_ns()
+	{
+		$id_trx = @$_REQUEST['id_trx'];
+
+		$data = @$this->m_file->find($id_trx)['id_trx'];
+
+		if (!empty($data)) {
+			$db_data = @$this->m_file->join('dokumen', 'file.id_dok=dokumen.id_dok', 'left')
+				->where('id_trx', $data)
+				->select('file.attach', 'id_trx', 'dokumen.nm_dok')->findAll();
+
+			foreach ($db_data as $key => $value) {
+
+				$respone['image_' . $value->nm_dok] = base_url('uploads/file') . '/' . $value->attach;
+			}
+			echo stripslashes(json_encode($respone));
+		} else {
+
+			echo json_encode(array('status' => '401', 'message' => 'Session Id Not Found', 'data' => $data));
+		}
+	}
+
+
+	public function insert_sessionid()
+	{
+		$sessionid = @$_REQUEST['sessionid'];
+		$id_trx = @$_REQUEST['id_trx'];
+		$hayo = @$_REQUEST['hayo'];
+
+		if (decode($hayo) == hayo()) {
+			$param = [
+				'sessionid' => $sessionid
+			];
+			$file = $this->m_file->update(array('id_trx' => $id_trx), $param);
+		} else {
+			abort(404);
+		}
+	}
+
+	// INI BELUM
+	// public function download()
+	// {
+	//     force_download();
+	// }
+
+	public function get_list_kios()
+	{
+
+		$hayo = @$_REQUEST['hayo'];
+
+		if (decode($hayo) == hayo()) {
+			$list_kios = $this->m_gdc->findAll();
+			foreach ($list_kios as $key => $value) {
+				$value->id = encode($value['id_gdc']);
+				$data['list_kios'][] = $value;
+			}
+
+			echo json_encode(array('status' => 'sukses', 'data' => $list_kios));
+		} else {
+			abort(404);
+		}
+	}
+
+	//--monitoring--------------------------------------------------------------------------------------------------------------------------
+
+	public function send_act()
+	{
+
+		$id_gdc = @$_REQUEST['id_gdc'];
+		$act = @$_REQUEST['act'];
+		$ket = @$_REQUEST['ket'];
+		$hayo = @$_REQUEST['hayo'];
+		if (decode($hayo) == hayo()) {
+			$param = [
+				'id_gdcl'    => $id_gdc,
+				'tanggal'    => date('Y-m-d'),
+				'waktu'      => date('H:i:s'),
+				'keterangan' => $ket,
+				'aktivitas'  => $act,
+			];
+
+			$log_gdc = $this->m_log_gdc->insert($param);
+
+			if ($log_gdc) {
+				echo json_encode(array('status' => '200', 'msg' => 'sukses update data'));
+			} else {
+				echo json_encode(array('status' => '201', 'msg' => 'gagal update data'));
+			}
+
+			if ($act == 10 || 11) {
+				$this->send_pwr($id_gdc, $act);
+			}
+		} else {
+			abort(404);
+		}
+	}
+
+	public function send_pwr($id_gdc = '', $act = '')
+	{
+		if (!empty($act)) {
+			if ($act == 10) {
+				$pwr = 'ON';
+			}
+			if ($act == 11) {
+				$pwr = 'OFF';
+			}
+
+			if (!empty($pwr)) {
+				$gdc = $this->m_gdc->update($id_gdc, ['pwr' => $pwr]);
+			}
+		}
+	}
+
+
+	public function get_statistik2()
+	{
+		$hayo = @$_REQUEST['hayo'];
+
+		if (decode($hayo) == hayo()) {
+			$data['gdc_on'] = $this->m_gdc->select('count(distinct(id_gdc)) as gdc_on')
+				->where('pwr', 'ON')->first()['gdc_on'];
+
+			$data['gdc_off'] = $this->m_gdc->select('count(distinct(id_gdc)) as gdc_off')
+				->where('pwr', 'OFF')->first()['gdc_off'];
+
+			$data['gdc_tot'] = $this->m_gdc->select('count(distinct(id_gdc)) as gdc_tot')->first()['gdc_tot'];
+
+			echo json_encode(array('status' => 'sukses', 'data' => $data));
+		} else {
+			show_404();
+		}
+	}
+
+	public function cek_update()
+	{
+		$hayo = @$_REQUEST['hayo'];
+		$idapp = @$_REQUEST['idapp'];
+		$ver = @$_REQUEST['ver'];
+
+		if (decode($hayo) == hayo()) {
+			$dataver = @$this->m_upd->where('id_app', $idapp)->orderBy('version', 'desc')->first();
+
+			if (!empty($dataver)) {
+				$verupd = $dataver['version'];
+				if ($verupd > $ver) {
+					echo json_encode(array('sts' => '200', 'version' => $verupd, 'file' => $dataver['attach'], 'msg' => 'New Version Available'));
+				} else {
+					echo json_encode(array('sts' => '201', 'version' => $verupd, 'msg' => 'Your Version was up to date'));
+				}
+			} else {
+				echo json_encode(array('sts' => '400', 'msg' => 'Failed Get App Version Data'));
+			}
+		} else {
+			show_404();
+		}
+	}
+
+
+	public function update_app()
+	{
+		$hayo = @$_REQUEST['hayo'];
+
+		if (decode($hayo) == hayo()) {
+			$id_app = @$_REQUEST['id_app'];
+			$nm_app = @$_REQUEST['nm_app'];
+			$ver = @$_REQUEST['ver'];
+
+			$param = array(
+				'id_app' 		=> $id_app,
+				'nm_app'		=> $nm_app,
+				'version'		=> $ver,
+				'tgl_update' => date('Y-m-d H:i:s')
+			);
+			$this->m_upd->insert($param);
+
+			$data = $this->m_upd->orderBy('id_update', 'desc')->first();
+
+			if (!empty(@$_FILES['file']['name'])) {
+
+				foreach ($_FILES['file']['name'] as $key => $value) {
+					$_FILES['file[]']['name'] = $_FILES['file']['name'][$key];
+					$_FILES['file[]']['type'] = $_FILES['file']['type'][$key];
+					$_FILES['file[]']['tmp_name'] = $_FILES['file']['tmp_name'][$key];
+					$_FILES['file[]']['error'] = $_FILES['file']['error'][$key];
+					$_FILES['file[]']['size'] = $_FILES['file']['size'][$key];
+
+					$file_name = $_FILES['file']['name'][$key];
+					if (!empty($file_name)) {
+
+						$config['upload_path'] = 'update/fileupdate';
+						$config['allowed_types'] = '*';
+
+						$new_name = $file_name;
+						$config['file_name'] = $new_name;
+
+						$this->load->library('upload', $config);
+						$this->upload->initialize($config);
+
+						if (!$this->upload->do_upload('file[]')) {
+
+							echo json_encode(array('status' => 'gagal', 'msg' => 'upload file gagal'));
+						} else {
+							$dataFile  = $this->upload->data();
+							$file_name = $dataFile['file_name'];
+							$full_path = $dataFile['full_path'];
+							//print_r($dataFile);							
+						}
+					} else {
+						echo json_encode(array('status' => 'gagal', 'msg' => 'File Not Found'));
+					}
+				}
+			}
+
+			$this->m_upd->update($data['id_update'], array('attach' => $file_name));
+
+			echo json_encode(array('sts' => '200', 'msg' => 'Update Success'));
+		} else {
+			show_404();
+		}
+	}
+
+	public function tembak_socket()
+	{
+		$host = "localhost";
+		$port = 1414; // open a client connection 
+		$shot = "J001B2B 1234 TEN";
+
+		$fp = fsockopen($host, $port, $errno, $errstr);
+		if (!$fp) {
+			$result = "Error: could not open socket connection";
+		} else { // get the welcome message fgets ($fp, 1024); // write the user string to the socket			
+			fputs($fp, $shot);
+			fclose($fp); // trim the result and remove the starting ?
 		}
 	}
 }

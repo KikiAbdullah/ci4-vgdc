@@ -14,13 +14,28 @@ class Gdc extends Model
 	protected $returnType           = 'array';
 	protected $useSoftDeletes       = false;
 	protected $protectFields        = true;
-	protected $allowedFields        = [];
+	protected $allowedFields        = [
+		'nm_gdc',
+		'lokasi',
+		'email_gdc',
+		'password',
+		'id_device',
+		'apikey',
+		'ip_gdc',
+		'ipserver',
+		'pwr',
+		'status',
+		'created_by',
+		'modified_by',
+		'approved_at',
+		'approved_by'
+	];
 
 	// Dates
-	protected $useTimestamps        = false;
+	protected $useTimestamps        = true;
 	protected $dateFormat           = 'datetime';
 	protected $createdField         = 'created_at';
-	protected $updatedField         = 'updated_at';
+	protected $updatedField         = 'modified_at';
 	protected $deletedField         = 'deleted_at';
 
 	// Validation
