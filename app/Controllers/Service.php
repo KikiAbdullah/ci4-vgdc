@@ -3,46 +3,11 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use App\Models\Dokumen;
-use App\Models\DokUpload;
-use App\Models\Driver;
-use App\Models\File;
-use App\Models\Gdc;
-use App\Models\JenisDriver;
-use App\Models\Layanan;
-use App\Models\Log;
-use App\Models\LogGdc;
-use App\Models\Menu;
-use App\Models\SubJenis;
-use App\Models\TipeDriver;
-use App\Models\Transaksi;
-use App\Models\Upd;
-use App\Models\User;
-use App\Models\UserRole;
+use CodeIgniter\Exceptions\PageNotFoundException;
 use Hermawan\DataTables\DataTable;
 
 class Service extends BaseController
 {
-	public function __construct()
-	{
-		$this->m_dokumen = new Dokumen();
-		$this->m_dok_upload = new DokUpload();
-		$this->m_driver = new Driver();
-		$this->m_file = new File();
-		$this->m_gdc = new Gdc();
-		$this->m_jenis_driver = new JenisDriver();
-		$this->m_layanan = new Layanan();
-		$this->m_log = new Log();
-		$this->m_log_gdc = new LogGdc();
-		$this->m_menu = new Menu();
-		$this->m_sub_jenis = new SubJenis();
-		$this->m_tipe_driver = new TipeDriver();
-		$this->m_transaksi = new Transaksi();
-		$this->m_upd = new Upd();
-		$this->m_user = new User();
-		$this->m_user_role = new UserRole();
-	}
-
 	public function get_tipejenis()
 	{
 		$hayo = @$_REQUEST['hayo'];
@@ -55,7 +20,7 @@ class Service extends BaseController
 
 			echo json_encode(array('tipe' => $data, 'jumlahtipe' => count($data), 'jenis' => $data1, 'jumlahjenis' => count($data1)));
 		} else {
-			// show_404();
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -84,7 +49,7 @@ class Service extends BaseController
 
 			return json_encode(array('tipe' => $data, 'jumlahtipe' => count($data)));
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -106,7 +71,7 @@ class Service extends BaseController
 
 			return json_encode(array('data' => $data, 'jumlah' => count($data)));
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -124,7 +89,7 @@ class Service extends BaseController
 			}
 			return json_encode(array('service' => $data, 'jumlah' => count($data)));
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -146,7 +111,7 @@ class Service extends BaseController
 			}
 			return json_encode(array('thedoc' => $data));
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -162,7 +127,7 @@ class Service extends BaseController
 			}
 			return json_encode(array('doc' => $data, 'jumlah' => count($data)));
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -176,7 +141,7 @@ class Service extends BaseController
 
 			return json_encode(array('data' => $data));
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -262,7 +227,7 @@ class Service extends BaseController
 
 			return json_encode(array('status' => 'sukses', 'data' => $data));
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -415,7 +380,7 @@ class Service extends BaseController
 
 			return json_encode(array('data' => $data, 'jumlah' => count($data)));
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -428,7 +393,7 @@ class Service extends BaseController
 			$data = $this->m_dokumen->whereIn('id_dok', explode(',', $d))->findAll();
 			return json_encode(array('data' => $data, 'jumlah' => count($data)));
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -444,7 +409,7 @@ class Service extends BaseController
 
 			return json_encode(array('data' => $data, 'jumlah' => count($data)));
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -564,7 +529,7 @@ class Service extends BaseController
 
 			return json_encode(array('status' => 'sukses', 'data' => $data));
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -630,7 +595,7 @@ class Service extends BaseController
 				return json_encode(array('status' => 'gagal', 'msg' => 'File tidak ditemukan '));
 			}
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -687,7 +652,7 @@ class Service extends BaseController
 			];
 			$this->m_transaki->update($id_trx, $param);
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -702,7 +667,7 @@ class Service extends BaseController
 
 			return json_encode(array('data' => $data));
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -717,7 +682,7 @@ class Service extends BaseController
 
 			return json_encode(array('jumlah' => count($data)));
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -770,7 +735,7 @@ class Service extends BaseController
 
 			return json_encode(array('status' => 'sukses', 'data' => $data));
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -816,7 +781,7 @@ class Service extends BaseController
 
 			return json_encode(array('status' => 'sukses', 'data' => $data));
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -856,7 +821,7 @@ class Service extends BaseController
 			$this->m_transaksi->where('sessionid', $sessionid);
 			$this->m_transaksi->update(array('recordingid' => $recordid));
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -896,7 +861,7 @@ class Service extends BaseController
 				echo json_encode(array('status' => 'gagal', 'msg' => 'saat akan melakukan panggilan video '));
 			}
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -1014,7 +979,7 @@ class Service extends BaseController
 			} else {
 			}
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -1039,7 +1004,7 @@ class Service extends BaseController
 				$trx = $this->m_transaksi->update($data, $param);
 			}
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -1114,7 +1079,7 @@ class Service extends BaseController
 				echo json_encode(array('status' => 'gagal', 'msg' => 'File Not Found '));
 			}
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -1154,7 +1119,7 @@ class Service extends BaseController
 			];
 			$file = $this->m_file->update(array('id_trx' => $id_trx), $param);
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -1178,7 +1143,7 @@ class Service extends BaseController
 
 			echo json_encode(array('status' => 'sukses', 'data' => $list_kios));
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -1212,7 +1177,7 @@ class Service extends BaseController
 				$this->send_pwr($id_gdc, $act);
 			}
 		} else {
-			abort(404);
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -1248,7 +1213,7 @@ class Service extends BaseController
 
 			echo json_encode(array('status' => 'sukses', 'data' => $data));
 		} else {
-			show_404();
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -1272,7 +1237,7 @@ class Service extends BaseController
 				echo json_encode(array('sts' => '400', 'msg' => 'Failed Get App Version Data'));
 			}
 		} else {
-			show_404();
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 
@@ -1336,7 +1301,7 @@ class Service extends BaseController
 
 			echo json_encode(array('sts' => '200', 'msg' => 'Update Success'));
 		} else {
-			show_404();
+			throw PageNotFoundException::forPageNotFound();
 		}
 	}
 

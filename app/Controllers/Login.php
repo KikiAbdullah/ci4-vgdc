@@ -11,14 +11,6 @@ use DateTime;
 
 class Login extends BaseController
 {
-    public function __construct()
-    {
-        $this->m_log = new Log();
-        $this->m_menu = new Menu();
-        $this->m_user = new User();
-        $this->m_user_role = new UserRole();
-    }
-
     public function index()
     {
         return view('auth/login');
@@ -28,7 +20,6 @@ class Login extends BaseController
     {
         // lakukan validasi
         $validation =  \Config\Services::validation();
-        
         $isDataValid = $validation->withRequest($this->request)->run();
 
 
@@ -131,6 +122,46 @@ class Login extends BaseController
             return redirect()->to('login');
         }
     }
+
+    public function logout()
+    {
+        // session_destroy();
+        $id_user = @$this->session->get('user_login_vgdc')['id_user'];
+        if (!empty($id_user)) {
+
+            $log = array(
+                'id_user' => $id_user,
+                'aktivitas' => '2',
+                'tanggal' => date('Y-m-d'),
+                'waktu' => date('H:i:s'),
+                'keterangan' => 'User logout success'
+            );
+            $this->m_log->insert($log);
+
+            $this->session->destroy();
+            return redirect()->to('login');
+        } else {
+            return redirect()->to('login');
+        }
+    }
+
+    public function logout_idle()
+    {
+        // session_destroy();
+        $id_user = @$this->session->get('user_login_vgdc')['id_user'];
+
+        if (!empty($id_user)) {
+
+            $log = array('id_user' => $id_user, 'aktivitas' => '3', 'tanggal' => date('Y-m-d'), 'waktu' => date('H:i:s'), 'keterangan' => 'Idle user logout');
+            $this->m_log->insert($log);
+
+            $this->session->destroy();
+            return redirect()->to('login');
+        } else {
+            return redirect()->to('login');
+        }
+    }
+
 
     function generate_menu(&$user_login_online)
     {

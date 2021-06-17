@@ -115,7 +115,7 @@ License: You must have a valid license purchased only from themeforest(the above
                 <!-- BEGIN PAGE HEAD-->
                 <div class="row">
                     <div class="col-md-12">
-                        <!-- SESSION NOTIF -->
+                        <?= @session()->getFlashdata('msg') ?>
                     </div>
                 </div>
                 <?= $this->renderSection('content') ?>
