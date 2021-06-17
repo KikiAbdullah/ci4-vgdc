@@ -24,6 +24,7 @@ License: You must have a valid license purchased only from themeforest(the above
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <meta content="" name="description" />
     <meta content="" name="author" />
+    <link rel="shortcut icon" href="<?= base_url('assets/favicon.png') ?>" />
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
     <link href="<?= base_url('assets/template/assets/global/plugins/font-awesome/css/font-awesome.min.css') ?>" rel="stylesheet" type="text/css" />
@@ -62,14 +63,12 @@ License: You must have a valid license purchased only from themeforest(the above
 
     <link href="<?= base_url('assets/template/style.css') ?>" rel="stylesheet" type="text/css" />
 
+    <?= $this->renderSection('css') ?>
+
+
 
     <script src="<?= base_url('assets/template/assets/global/plugins/jquery.min.js') ?>" type="text/javascript"></script>
     <script src="<?= base_url('assets/template/assets/global/plugins/bootstrap/js/bootstrap.min.js') ?>" type="text/javascript"></script>
-
-
-
-
-
 
     <!-- END THEME LAYOUT STYLES -->
     <style type="text/css">
@@ -78,7 +77,6 @@ License: You must have a valid license purchased only from themeforest(the above
             position: absolute;
         }
     </style>
-    <link rel="shortcut icon" href="<?= base_url('assets/favicon.png') ?>" />
 
     <!-- charts -->
     <script type="text/javascript" src="<?= base_url('assets/highcharts/highcharts.js') ?>">
@@ -90,6 +88,9 @@ License: You must have a valid license purchased only from themeforest(the above
     <script type="text/javascript" src="<?= base_url('assets/highcharts/modules/exporting.js') ?>">
     </script>
     <script type="text/javascript" src="<?= base_url('assets/highcharts/themes/grid-light.js') ?>"></script>
+
+    <?= $this->renderSection('js') ?>
+
 </head>
 <!-- END HEAD -->
 

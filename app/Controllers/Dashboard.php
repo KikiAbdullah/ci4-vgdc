@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\Cs;
 use App\Models\Gdc;
 use App\Models\Layanan;
+use App\Models\Transaksi;
 
 class Dashboard extends BaseController
 {
@@ -13,6 +14,7 @@ class Dashboard extends BaseController
         $this->m_cs = new Cs();
         $this->m_gdc = new Gdc();
         $this->m_layanan = new Layanan();
+        $this->m_transaksi = new Transaksi();
 
         $this->cname = 'dashboard';
 
@@ -277,9 +279,6 @@ class Dashboard extends BaseController
     {
 
         for ($i = 1; $i <= 12; $i++) {
-            $this->db->select('count(*) as jml');
-            $this->db->where('YEAR(tanggal) = ' . date('Y') . ' AND MONTH(tanggal) = ' . $i . '');
-            $data[] = (int)$this->db->get('transaksi', 1)->row()->jml;
 
             $data[] = (int)$this->m_transaksi->select('count(*) as jml')
                 ->where('YEAR(tanggal) = ' . date('Y') . ' AND MONTH(tanggal) = ' . $i . '')
