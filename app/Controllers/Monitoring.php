@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use Irsyadulibad\DataTables\DataTables;
 
 class Monitoring extends BaseController
 {
@@ -19,5 +20,24 @@ class Monitoring extends BaseController
         $data['log_gdc'] = $this->m_log_gdc->findAll();
 
         return view('monitoring/index', $data);
+    }
+
+    function get_data()
+    {
+        $where = array();
+        if (!empty($filter['tanggal_awal']) && !empty($filter['tanggal_akhir'])) {
+            $where[] = array(
+                'date(log_gdc.tanggal) >=' => date('Y-m-d', strtotime($filter['tanggal_awal'])),
+                'date(log_gdc.tanggal) <=' => date('Y-m-d', strtotime($filter['tanggal_akhir']))
+            );
+        }
+
+        return DataTables::use('log_gdc')->select('log_gdc.tanggal as tanggal,log_gdc.waktu as waktu,nm_gdc,deskripsi,keterangan')
+            ->join('gdc', 'gdc.id_gdc = log_gdc.id_gdcl', 'left')
+            ->join('aktivitas_status', 'aktivitas_status.id_aktivitas = log_gdc.aktivitas', 'left')
+            ->orderBy('tanggal', 'desc')
+            ->orderBy('waktu', 'desc')
+            ->where(@$where)
+            ->make(true);
     }
 }

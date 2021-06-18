@@ -3,8 +3,11 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\Transaksi;
 use CodeIgniter\Exceptions\PageNotFoundException;
+use Config\Services;
 use Hermawan\DataTables\DataTable;
+use Irsyadulibad\DataTables\DataTables;
 
 class Service extends BaseController
 {
@@ -235,30 +238,35 @@ class Service extends BaseController
 	// data tabel handling	
 	public function get_list_report()
 	{
-		$db = db_connect();
-		$builder = $db->table('transaksi')->select('transaksi.*,  transaksi.id_trx, layanan.nm_layanan,  timediff(wkt_selesai, wkt_mulai) as waktu, gdc.lokasi, gdc.nm_gdc, jenis_driver.nm_jenis, tipe_driver.nm_tipe, csat.gambar, nm_driver, tanggal, tipe_driver.nm_tipe, wkt_mulai, wkt_selesai, sessionid, sts_trx ')
+		$where1 = array();
+		$where2 = array();
+
+		$filter = $this->session->get('filter');
+		if (!empty($filter['tanggal_awal']) && !empty($filter['tanggal_akhir'])) {
+
+			$where1 = array(
+				'date(tanggal) >=' => date('Y-m-d', strtotime($filter['tanggal_awal'])),
+				'date(tanggal) <=' => date('Y-m-d', strtotime($filter['tanggal_akhir']))
+			);
+		}
+
+
+		if (!empty($filter['id_layanan'])) {
+			$where2 = array('transaksi.id_layanan' => $filter['id_layanan']);
+		}
+
+		return DataTables::use('transaksi')
 			->join('layanan', 'transaksi.id_layanan = layanan.id_layanan', 'left')
 			->join('gdc', 'transaksi.id_gdc = gdc.id_gdc', 'left')
 			->join('jenis_driver', 'transaksi.id_jenis = jenis_driver.id_jenis', 'left')
 			->join('tipe_driver', 'transaksi.id_tipe = tipe_driver.id_tipe', 'left')
 			->join('csat', 'transaksi.id_csat = csat.id_csat', 'left')
+			->where(@$where1)
+			->where(@$where2)
 			->orderBy('tanggal', 'desc')
-			->orderBy('wkt_mulai', 'desc');
-
-		$filter = $this->session->get('filter');
-		if (!empty($filter['tanggal_awal']) && !empty($filter['tanggal_akhir'])) {
-			$builder = $builder->where('date(tanggal) >=', date('Y-m-d', strtotime($filter['tanggal_awal'])))
-				->where('date(tanggal) <=', date('Y-m-d', strtotime($filter['tanggal_akhir'])));
-		}
-
-
-		if (!empty($filter['id_layanan'])) {
-			$builder = $builder->where('transaksi.id_layanan', $filter['id_layanan']);
-		}
-
-
-		return DataTable::of($builder)
-			->toJson();
+			->orderBy('wkt_mulai', 'desc')
+			->select('transaksi.*,  transaksi.id_trx, layanan.nm_layanan as nm_layanan,  timediff(wkt_selesai, wkt_mulai) as waktu, gdc.lokasi as lokasi, gdc.nm_gdc, jenis_driver.nm_jenis as nm_jenis, tipe_driver.nm_tipe as nm_tipe, csat.gambar, nm_driver, tanggal, tipe_driver.nm_tipe, wkt_mulai, wkt_selesai, sessionid, sts_trx ')
+			->make(true);
 	}
 
 	// view document
@@ -790,21 +798,16 @@ class Service extends BaseController
 
 	public function get_list_dashboard()
 	{
-		// INI BELUM
-		// $data = $this->m_transaksi->join('layanan', 'transaksi.id_layanan = layanan.id_layanan', 'left')
-		// 	->join('gdc', 'transaksi.id_gdc = gdc.id_gdc', 'left')
-		// 	->join('jenis_driver', 'transaksi.id_jenis = jenis_driver.id_jenis', 'left')
-		// 	->join('tipe_driver', 'transaksi.id_tipe = tipe_driver.id_tipe', 'left')
-		// 	->join('csat', 'transaksi.id_csat = csat.id_csat', 'left')
-		// 	->where('sts_trx', 1)
-		// 	->where('tanggal', date('Y-m-d'))
-		// 	->orderBy('tanggal', 'desc')
-		// 	->orderBy('wkt_mulai', 'desc')
-		// 	->select('transaksi.*', 'transaksi.id_trx', 'layanan.nm_layanan', 'timediff(wkt_selesai, wkt_mulai) as waktu', 'gdc.lokasi', 'gdc.nm_gdc', 'jenis_driver.nm_jenis', 'tipe_driver.nm_tipe', 'csat.gambar', 'nm_driver', 'tanggal', 'tipe_driver.nm_tipe', 'wkt_mulai', 'wkt_selesai', 'sessionid', 'sts_trx')
-		// 	->findAll();
-
-		// return DataTables::of($data)
-		// 	->make(true);
+		return DataTables::use('transaksi')->join('layanan', 'transaksi.id_layanan = layanan.id_layanan', 'left')
+			->join('gdc', 'transaksi.id_gdc = gdc.id_gdc', 'left')
+			->join('jenis_driver', 'transaksi.id_jenis = jenis_driver.id_jenis', 'left')
+			->join('tipe_driver', 'transaksi.id_tipe = tipe_driver.id_tipe', 'left')
+			->join('csat', 'transaksi.id_csat = csat.id_csat', 'left')
+			->where(['sts_trx' => 1, 'tanggal' => date('Y-m-d')])
+			->orderBy('tanggal', 'desc')
+			->orderBy('wkt_mulai', 'desc')
+			->select('transaksi.*', 'transaksi.id_trx', 'layanan.nm_layanan', 'timediff(wkt_selesai, wkt_mulai) as waktu', 'gdc.lokasi', 'gdc.nm_gdc', 'jenis_driver.nm_jenis', 'tipe_driver.nm_tipe', 'csat.gambar', 'nm_driver', 'tanggal', 'tipe_driver.nm_tipe', 'wkt_mulai', 'wkt_selesai', 'sessionid', 'sts_trx')
+			->make(true);
 	}
 
 

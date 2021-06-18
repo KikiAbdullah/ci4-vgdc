@@ -44,8 +44,7 @@ class Autoload extends AutoloadConfig
 		'Config'      => APPPATH . 'Config',
 		APP_NAMESPACE => APPPATH,
 		'App'         => APPPATH,
-		'Hermawan\DataTables'   => APPPATH . 'Libraries/ci4-datatables/src',
-		'PHPSQLParser'   => APPPATH . 'Libraries/PHPSQLParser',
+		'Irsyadulibad\DataTables'   => APPPATH . 'Libraries/ci4-datatables/src'
 
 	];
 

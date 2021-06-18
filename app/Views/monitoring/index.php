@@ -125,8 +125,8 @@
         // }, 3000);
 
         var oTable = $('#tabel').dataTable({
-            "bProcessing": true,
-            "bServerSide": true,
+            "bProcessing": false,
+            "bServerSide": false,
             "sAjaxSource": '<?php echo site_url("monitoring/get_data"); ?>', //mengambil data ke controller datatable fungsi getdata
             "sPaginationType": "full_numbers",
             "aLengthMenu": [
@@ -186,11 +186,13 @@
                 aoData.push(csrf);
                 $.ajax({
                     'dataType': 'json',
-                    'type': 'POST',
+                    'type': 'GET',
                     'url': sSource,
                     'data': aoData,
                     'success': fnCallback
                 });
+
+                console.log(sSource);
             }
 
         });

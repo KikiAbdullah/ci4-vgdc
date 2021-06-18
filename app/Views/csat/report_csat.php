@@ -1,9 +1,6 @@
 <?= $this->extend('layouts/app') ?>
 
 <?= $this->section('content') ?>
-<div class="col-md-12" style="margin-bottom:  25px;">
-    <label class="title_name" style="color: #00B14F;">CSAT REPORT</label><br>
-</div>
 <div class="col-md-12">
     <div class="tab-content">
         <div class="col-md-12" style="margin-bottom : 55px;padding-left: 0; padding-right : 0;">
@@ -24,17 +21,18 @@
                         <form role="form" action="<?= site_url('csat/report_csat') ?>" method="post">
                             <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>">
                             <div class="form-body">
-                                <div class="form-group col-md-4">
-                                    <label>Date</label>
+                                <div class="form-group col-md-6">
+                                    <label>Tanggal</label>
                                     <div class="input-group input-large date-picker input-daterange" data-date-format="dd-mm-yyyy">
                                         <input type="text" class="form-control" name="tanggal_awal" autocomplete="off" value="<?= @$filter['tanggal_awal']; ?>">
                                         <span class="input-group-addon"> to </span>
                                         <input type="text" class="form-control" name="tanggal_akhir" autocomplete="off" value="<?= @$filter['tanggal_akhir']; ?>">
                                     </div>
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label>Service</label>
-                                    <div class="input-group input-large">
+
+                                <div class="form-group col-md-6">
+                                    <label>Layanan</label>
+                                    <div class="input-group">
                                         <select class="form-control select2" name="id_layanan">
                                             <option value=''>Pilih Layanan</option>
                                             <?php foreach ($layanan as $key => $c) :
@@ -47,23 +45,16 @@
                                             <?php endforeach ?>
                                         </select>
                                     </div>
-                                </div>
-                                <div class="form-group col-md-2">
-                                    <label style="color: white;">Service</label>
+                                    <br />
                                     <a class="btn default" style="width : 100%;" href="<?= site_url('csat/reset_filter_csat') ?>"><i class="fa fa-refresh"></i> Reset</a>
-                                </div>
-                                <div class="form-group col-md-2">
-                                    <label style="color: white;">Service</label>
-                                    <button type="submit" class="btn blue" style="border :0;background-color : #007024; width : 100%;"><i class="fa fa-search"></i> Apply</button>
-                                </div><br />
-                                <div class="form-group col-md-8">
-                                </div>
-                                <div class="form-group col-md-4">
+                                    <br /><br />
+                                    <button type="submit" class="btn blue" style="border :0;background-color : #007024; width : 100%;"><i class="fa fa-search"></i> Cari</button>
+                                    <br /><br />
                                     <?php if (!empty($this->akses[4])) { ?>
                                         <a class="btn blue" style="width : 100%;" href="<?= site_url('csat/export_excel_csat') ?>"><i class="fa fa-file-excel-o"></i> Export</a>
                                     <?php } ?>
                                 </div>
-                                <br /><br /><br /><br />
+                                <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
                             </div>
                         </form>
                     </div>
@@ -93,41 +84,31 @@
                 </tr>
             </thead>
             <tbody id="listData" class="list" style="color: black;font-weight: 800;text-align: center;border: 2px #e4e4e4 solid;">
-                <!-- <?php for ($i = 1; $i < 6; $i++) { ?>
-                    <tr>
-                        <td><?= $i ?></td>
-                        <td>Muhammad Adam Ibrahim</td>
-                        <td>Change ID Card Number</td>
-                        <td>Malang</td>
-                        <td><span class="tmbl tmbl-ijo">20:00:00</span></td>
-                        <td><a href="<?= site_url('dashboard/detail_report') ?>"><img src="<?= base_url('assets/icon_mekar.png'); ?>" style="width: 30px;"></a></td>
-                    </tr>
-                <?php } ?> -->
             </tbody>
         </table>
     </div>
 </div>
-
 <?= $this->endSection() ?>
 
 <?= $this->section('js') ?>
 <script>
     var loading = false;
     $(function() {
-        // get_list();
-        // setInterval(() => {
-        //     get_list();
-        // }, 3000);
 
         var oTable = $('#tabel').dataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: '<?php echo site_url("service/get_list_report"); ?>'
-            },
-            columns: [{
-                    data: "tanggal",
-                    render: function(data, type, row) {
+            "bProcessing": true,
+            "bServerSide": true,
+            "sAjaxSource": '<?php echo site_url("service/get_list_report"); ?>', //mengambil data ke controller datatable fungsi getdata
+            "sPaginationType": "full_numbers",
+            "aLengthMenu": [
+                [15, 30, 75, -1],
+                [15, 30, 75, "All"]
+            ],
+            "iDisplayStart ": 15,
+            "ordering": false,
+            "columns": [{
+                    "data": "tanggal",
+                    "render": function(data, type, row) {
                         var date = new Date(data);
                         yr = date.getFullYear(),
                             month = date.getMonth() + 1,
@@ -138,52 +119,80 @@
                     }
                 },
                 {
-                    data: "sessionid"
+                    "data": "sessionid"
                 },
                 {
-                    data: "nm_driver"
+                    "data": "nm_driver"
                 },
                 {
-                    data: "nm_jenis"
+                    "data": "nm_jenis"
                 },
                 {
-                    data: "nm_tipe"
+                    "data": "nm_tipe"
                 },
                 {
-                    data: "nm_layanan"
+                    "data": "nm_layanan"
                 },
                 {
-                    data: "lokasi"
+                    "data": "lokasi"
                 },
                 {
-                    data: "wkt_mulai"
+                    "data": "wkt_mulai"
                 },
                 {
-                    data: "wkt_selesai"
+                    "data": "wkt_selesai"
                 },
                 {
-                    data: "id_csat",
-                    render: function(data, type, row) {
+                    "data": "id_csat",
+                    "render": function(data, type, row) {
                         if (data == 1) {
-                            return '<img src="<?= base_url('assets/upload/tidak-puas.png'); ?> "style="width: 30px;">';
+                            return '<img src="<?= base_url('uploads/skp/tidak-puas.png'); ?> "style="width: 30px;">';
                         }
                         if (data == 2) {
-                            return '<img src="<?= base_url('assets/upload/kurang-puas.png'); ?>" style="width: 30px;">';
+                            return '<img src="<?= base_url('uploads/skp/kurang-puas.png'); ?>" style="width: 30px;">';
                         } else if (data == 3) {
-                            return '<img src="<?= base_url('assets/upload/puas.png'); ?>" style="width: 30px;">';
+                            return '<img src="<?= base_url('uploads/skp/puas.png'); ?>" style="width: 30px;">';
                         } else if (data == 4) {
-                            return '<img src="<?= base_url('assets/upload/cukup-puas.png'); ?>" style="width: 30px;">';
+                            return '<img src="<?= base_url('uploads/skp/cukup-puas.png'); ?>" style="width: 30px;">';
                         } else if (data == 5) {
-                            return '<img src="<?= base_url('assets/upload/sangat-puas.png'); ?>" style="width: 30px;">';
+                            return '<img src="<?= base_url('uploads/skp/sangat-puas.png'); ?>" style="width: 30px;">';
                         } else {
                             return '';
                         }
                     }
                 },
                 {
-                    data: "id_csat"
+                    "data": "id_csat"
                 },
             ],
+            "oLanguage": {
+                "sProcessing": '<img src="<?php echo base_url("assets/loading2.gif"); ?>"><br><p style="margin-top:-5px;">Loading</p>'
+            },
+            "fnInitComplete": function() {
+                //oTable.fnAdjustColumnSizing();
+                $('#tabel_length').css('margin-top', -60);
+                $('#tabel_filter').css('margin-top', -60);
+            },
+            'fnServerData': function(sSource, aoData, fnCallback) {
+                var csrf = {
+                    "name": '<?= csrf_token() ?>',
+                    "value": '<?= csrf_hash() ?>',
+                };
+                aoData.push(csrf);
+
+                var csrf = {
+                    "name": 'hayo',
+                    "value": '<?= encode(hayo()) ?>',
+                };
+                aoData.push(csrf);
+                $.ajax({
+                    'dataType': 'json',
+                    'type': 'GET',
+                    'url': sSource,
+                    'data': aoData,
+                    'success': fnCallback
+                });
+            }
 
         });
         $('#tabel').on('draw.dt', function() {

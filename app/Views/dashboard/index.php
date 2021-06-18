@@ -100,8 +100,8 @@
     var loading = false;
     $(function() {
         var oTable = $('#tabel').dataTable({
-            "bProcessing": true,
-            "bServerSide": true,
+            "bProcessing": false,
+            "bServerSide": false,
             "sAjaxSource": '<?php echo site_url("service/get_list_dashboard"); ?>', //mengambil data ke controller datatable fungsi getdata
             "sPaginationType": "full_numbers",
             "aLengthMenu": [
@@ -182,7 +182,7 @@
                 aoData.push(csrf);
                 $.ajax({
                     'dataType': 'json',
-                    'type': 'POST',
+                    'type': 'GET',
                     'url': sSource,
                     'data': aoData,
                     'success': fnCallback
