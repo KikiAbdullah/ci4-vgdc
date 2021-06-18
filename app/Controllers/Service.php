@@ -255,7 +255,7 @@ class Service extends BaseController
 			$where2 = array('transaksi.id_layanan' => $filter['id_layanan']);
 		}
 
-		return DataTables::use('transaksi')
+		return DataTables::use('transaksi')->select('transaksi.*,  transaksi.id_trx, layanan.nm_layanan as nm_layanan,  timediff(wkt_selesai, wkt_mulai) as waktu, gdc.lokasi as lokasi, gdc.nm_gdc, jenis_driver.nm_jenis as nm_jenis, tipe_driver.nm_tipe as nm_tipe, csat.gambar, nm_driver, tanggal, tipe_driver.nm_tipe, wkt_mulai, wkt_selesai, sessionid, sts_trx ')
 			->join('layanan', 'transaksi.id_layanan = layanan.id_layanan', 'left')
 			->join('gdc', 'transaksi.id_gdc = gdc.id_gdc', 'left')
 			->join('jenis_driver', 'transaksi.id_jenis = jenis_driver.id_jenis', 'left')
@@ -265,7 +265,6 @@ class Service extends BaseController
 			->where(@$where2)
 			->orderBy('tanggal', 'desc')
 			->orderBy('wkt_mulai', 'desc')
-			->select('transaksi.*,  transaksi.id_trx, layanan.nm_layanan as nm_layanan,  timediff(wkt_selesai, wkt_mulai) as waktu, gdc.lokasi as lokasi, gdc.nm_gdc, jenis_driver.nm_jenis as nm_jenis, tipe_driver.nm_tipe as nm_tipe, csat.gambar, nm_driver, tanggal, tipe_driver.nm_tipe, wkt_mulai, wkt_selesai, sessionid, sts_trx ')
 			->make(true);
 	}
 
@@ -798,7 +797,8 @@ class Service extends BaseController
 
 	public function get_list_dashboard()
 	{
-		return DataTables::use('transaksi')->join('layanan', 'transaksi.id_layanan = layanan.id_layanan', 'left')
+		return DataTables::use('transaksi')->select('transaksi.*,  transaksi.id_trx, layanan.nm_layanan as nm_layanan,  timediff(wkt_selesai, wkt_mulai) as waktu, gdc.lokasi as lokasi, gdc.nm_gdc, jenis_driver.nm_jenis as nm_jenis, tipe_driver.nm_tipe as nm_tipe, csat.gambar, nm_driver, tanggal, tipe_driver.nm_tipe, wkt_mulai, wkt_selesai, sessionid, sts_trx')
+			->join('layanan', 'transaksi.id_layanan = layanan.id_layanan', 'left')
 			->join('gdc', 'transaksi.id_gdc = gdc.id_gdc', 'left')
 			->join('jenis_driver', 'transaksi.id_jenis = jenis_driver.id_jenis', 'left')
 			->join('tipe_driver', 'transaksi.id_tipe = tipe_driver.id_tipe', 'left')
@@ -806,7 +806,6 @@ class Service extends BaseController
 			->where(['sts_trx' => 1, 'tanggal' => date('Y-m-d')])
 			->orderBy('tanggal', 'desc')
 			->orderBy('wkt_mulai', 'desc')
-			->select('transaksi.*', 'transaksi.id_trx', 'layanan.nm_layanan', 'timediff(wkt_selesai, wkt_mulai) as waktu', 'gdc.lokasi', 'gdc.nm_gdc', 'jenis_driver.nm_jenis', 'tipe_driver.nm_tipe', 'csat.gambar', 'nm_driver', 'tanggal', 'tipe_driver.nm_tipe', 'wkt_mulai', 'wkt_selesai', 'sessionid', 'sts_trx')
 			->make(true);
 	}
 

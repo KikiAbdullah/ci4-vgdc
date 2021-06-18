@@ -100,19 +100,20 @@
     var loading = false;
     $(function() {
         var oTable = $('#tabel').dataTable({
-            "bProcessing": false,
-            "bServerSide": false,
-            "sAjaxSource": '<?php echo site_url("service/get_list_dashboard"); ?>', //mengambil data ke controller datatable fungsi getdata
-            "sPaginationType": "full_numbers",
-            "aLengthMenu": [
-                [15, 30, 75, -1],
-                [15, 30, 75, "All"]
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '<?php echo site_url("service/get_list_dashboard"); ?>'
+            },
+            paginationType: "full_numbers",
+            lengthMenu: [
+                [15, 30, 75],
+                [15, 30, 75]
             ],
-            "iDisplayStart ": 15,
-            "ordering": false,
-            "columns": [{
-                    "data": "tanggal",
-                    "render": function(data, type, row) {
+            ordering: false,
+            columns: [{
+                    data: "tanggal",
+                    render: function(data, type, row) {
                         var date = new Date(data);
                         yr = date.getFullYear(),
                             month = date.getMonth() + 1,
@@ -123,23 +124,23 @@
                     }
                 },
                 {
-                    "data": "nm_driver"
+                    data: "nm_driver"
                 },
                 {
-                    "data": "nm_jenis"
+                    data: "nm_jenis"
                 },
                 {
-                    "data": "nm_tipe"
+                    data: "nm_tipe"
                 },
                 {
-                    "data": "nm_layanan"
+                    data: "nm_layanan"
                 },
                 {
-                    "data": "lokasi"
+                    data: "lokasi"
                 },
                 {
-                    "data": "sts_trx",
-                    "render": function(data, type, row) {
+                    data: "sts_trx",
+                    render: function(data, type, row) {
                         if (data == 2) {
 
                             return '<input type="hidden" class="sts_trx" value="' + data + '"/>On process'
@@ -163,32 +164,9 @@
                 }
 
             ],
-            "oLanguage": {
-                "sProcessing": '<img src="<?php echo base_url("assets/loading2.gif"); ?>"><br><p style="margin-top:-5px;">Loading</p>'
-            },
-            "fnInitComplete": function() {
-                //oTable.fnAdjustColumnSizing();
-                $('#tabel_length').css('margin-top', -60);
-                $('#tabel_filter').css('margin-top', -60);
-            },
-            'fnServerData': function(sSource, aoData, fnCallback) {
-                var csrf = {
-                    "name": '<?= csrf_token() ?>',
-                    "value": '<?= csrf_hash() ?>',
-                };
-                aoData.push(csrf);
-
-                // var csrf = {"name": 'hayo', "value": '<?= encode(hayo()) ?>',};
-                aoData.push(csrf);
-                $.ajax({
-                    'dataType': 'json',
-                    'type': 'GET',
-                    'url': sSource,
-                    'data': aoData,
-                    'success': fnCallback
-                });
+            language: {
+                processing: '<img src="<?php echo base_url("assets/loading2.gif"); ?>"><br><p style="margin-top:-5px;">Loading</p>'
             }
-
         });
 
         get_list();

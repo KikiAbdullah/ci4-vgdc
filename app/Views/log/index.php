@@ -79,27 +79,21 @@
 <script>
     var loading = false;
     $(function() {
-        // get_list();
-        // setInterval(() => {
-        //     get_list();
-        // }, 3000);
-
         var oTable = $('#tabel').dataTable({
-            "bProcessing": true,
-            "bServerSide": true,
-            "sAjaxSource": '<?php echo site_url("log/get_data"); ?>', //mengambil data ke controller datatable fungsi getdata
-            "sPaginationType": "full_numbers",
-            "aLengthMenu": [
-                [15, 30, 75, -1],
-                [15, 30, 75, "All"]
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '<?php echo site_url("log/get_data"); ?>'
+            },
+            paginationType: "full_numbers",
+            lengthMenu: [
+                [15, 30, 75],
+                [15, 30, 75]
             ],
-            "iDisplayStart ": 15,
-            "ordering": false,
-            "columns": [
-                // { "data": "no_antrian"},
-                {
-                    "data": "tanggal",
-                    "render": function(data, type, row) {
+            ordering: false,
+            columns: [{
+                    data: "tanggal",
+                    render: function(data, type, row) {
                         var date = new Date(data);
                         yr = date.getFullYear(),
                             month = date.getMonth() + 1,
@@ -109,51 +103,25 @@
 
                     }
                 },
-                // { "data": ""},
                 {
-                    "data": "waktu"
+                    data: "waktu"
                 },
                 {
-                    "data": "nama"
+                    data: "nama"
                 },
                 {
-                    "data": "deskripsi"
+                    data: "deskripsi"
                 },
                 {
-                    "data": "keterangan"
+                    data: "keterangan"
                 }
 
             ],
             "oLanguage": {
                 "sProcessing": '<img src="<?php echo base_url("assets/loading2.gif"); ?>"><br><p style="margin-top:-5px;">Loading</p>'
             },
-            "fnInitComplete": function() {
-                //oTable.fnAdjustColumnSizing();
-                $('#tabel_length').css('margin-top', -60);
-                $('#tabel_filter').css('margin-top', -60);
-            },
-            'fnServerData': function(sSource, aoData, fnCallback) {
-                var csrf = {
-                    "name": '<?= csrf_token() ?>',
-                    "value": '<?= csrf_hash() ?>',
-                };
-                aoData.push(csrf);
-
-                var csrf = {
-                    "name": 'hayo',
-                    "value": '<?= encode(hayo()) ?>',
-                };
-                aoData.push(csrf);
-                $.ajax({
-                    'dataType': 'json',
-                    'type': 'POST',
-                    'url': sSource,
-                    'data': aoData,
-                    'success': fnCallback
-                });
-            }
-
         });
+
         $('#tabel').on('draw.dt', function() {
             // reloadbutton();
             $('.make-switch').bootstrapSwitch();

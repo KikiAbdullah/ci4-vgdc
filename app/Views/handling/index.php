@@ -1,6 +1,10 @@
 <?= $this->extend('layouts/app') ?>
 
 <?= $this->section('content') ?>
+<div class="col-md-12" style="margin-bottom:  5px;">
+    <label class="title_name" style="color: #00B14F;">HANDLING PROCESS</label>
+</div>
+
 <div class="col-md-12">
     <div class="tab-content">
         <div class="col-md-12" style="margin-bottom : 55px;padding-left: 0; padding-right : 0;">
@@ -18,22 +22,20 @@
                         </div>
                     </div>
                     <div class="portlet-body form">
-                        <form role="form" action="<?= site_url('dashboard/report') ?>" method="post">
+                        <form role="form" action="<?= site_url('handling/index') ?>" method="post">
                             <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>">
-
                             <div class="form-body">
-                                <div class="form-group col-md-6">
-                                    <label>Tanggal</label>
+                                <div class="form-group col-md-4">
+                                    <label>Date</label>
                                     <div class="input-group input-large date-picker input-daterange" data-date-format="dd-mm-yyyy">
                                         <input type="text" class="form-control" name="tanggal_awal" autocomplete="off" value="<?= @$filter['tanggal_awal']; ?>">
                                         <span class="input-group-addon"> to </span>
                                         <input type="text" class="form-control" name="tanggal_akhir" autocomplete="off" value="<?= @$filter['tanggal_akhir']; ?>">
                                     </div>
                                 </div>
-
-                                <div class="form-group col-md-6">
-                                    <label>Layanan</label>
-                                    <div class="input-group">
+                                <div class="form-group col-md-4">
+                                    <label>Service</label>
+                                    <div class="input-group input-large">
                                         <select class="form-control select2" name="id_layanan">
                                             <option value=''>Pilih Layanan</option>
                                             <?php foreach ($layanan as $key => $c) :
@@ -44,15 +46,18 @@
                                             ?>
                                                 <option value="<?= $c['id_layanan'] ?>" <?= $selected ?>><?= $c['nm_layanan'] ?></option>
                                             <?php endforeach ?>
-
                                         </select>
                                     </div>
-                                    <br />
-                                    <a class="btn default" style="width : 100%;" href="<?= site_url('dashboard/reset_filter') ?>"><i class="fa fa-refresh"></i> Reset</a>
-                                    <br /><br />
-                                    <button type="submit" class="btn blue" style="border :0;background-color : #007024;width : 100%;"><i class="fa fa-search"></i> Cari</button>
                                 </div>
-                                <br /><br /><br /><br /><br /><br /><br /><br />
+                                <div class="form-group col-md-2">
+                                    <label style="color: white;">Service</label>
+                                    <a class="btn default " style="width : 100%;" href="<?= site_url('handling/reset_filter') ?>"><i class="fa fa-refresh"></i> Reset</a>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label style="color: white;">Service</label>
+                                    <button type="submit" class="btn blue" style="border :0;background-color : #00B14F;width : 100%;"><i class="fa fa-search"></i> Apply</button>
+                                </div>
+                                <br /><br /><br />
                             </div>
                         </form>
                     </div>
@@ -60,85 +65,137 @@
                 <!-- END SAMPLE FORM PORTLET-->
             </div>
         </div>
+    </div>
+    <div class="modal view_doc fade bs-modal-md preview" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-md" style="width : 90%">
+            <div class="modal-content">
+                <div class="modal-header"><br><br>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <!-- <button id="btn" type="button" class="rotate" >rotate</button> -->
+                    <button id="btnFullScreen" type="button" class="fullscreen">fullscreen</button>
 
-        <div class="modal view_doc fade bs-modal-md preview" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-md" style="width : 90%">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                        <!-- <button id="btn" type="button" class="rotate" >rotate</button> -->
-                        <button id="btnFullScreen" type="button" class="fullscreen">fullscreen</button>
+                    <a href="javascript:void(0);" class="download_all">
+                        <button id="btnDownload" class="download_file" type="submit">download</button>
+                    </a>
 
-                        <a href="javascript:void(0);" class="download_all">
-                            <button id="btnDownload" class="download_file" type="submit">download</button>
-                        </a>
-
-                        <br>
-                        <h4 class="bold preview_title"></h4>
-                        <div class="content">
-                            <!-- <img id="imageFull" src="" class="content_image" style="width : 100% ; height : 100%;" /> -->
-                        </div>
-                        <br>
+                    <br>
+                    <h4 class="bold preview_title"></h4>
+                    <div class="content">
+                        <!-- <img id="imageFull" src="" class="content_image" style="width : 100% ; height : 100%;" /> -->
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-white" data-dismiss="modal">Tutup</button>
+                    <br>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <div class="modal fade bs-modal-dm finish" tabindex="-1" role="dialog" aria-hidden="true" style="margin-top: 68px;">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <br><br>
+                    <h4 id="myModalLabel" class="bold">Anda akan mengakhiri proses handling dengan DAX</h4>
+                    <br>
+                    <p class="no-margin">Tekan tombol <b>Disabled CSAT</b> untuk mengakhiri proses handling tanpa menampilkan CSAT atau tekan tombol <b>Enabled CSAT</b> untuk mengakhiri proses handling dengan menampilkan CSAT untuk DAX</p>
+                    <br>
+                </div>
+                <div class="modal-footer">
+                    <br>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-white" data-dismiss="modal" style="width: -webkit-fill-available">Batal</button>
+                    </div>
+                    <div class="col-md-5">
+                        <a href="#" class="btn btn-primary-f2 tidak_tampil" style="width: -webkit-fill-available">Disabled CSAT</a>
+                    </div>
+                    <div class="col-md-5">
+                        <a href="#" class="btn btn-primary-f gae_popup" style="width: -webkit-fill-available">Enabled CSAT</a>
                     </div>
                 </div>
-                <!-- /.modal-content -->
             </div>
-            <!-- /.modal-dialog -->
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <div class="tab-content">
+        <div class="col-md-12" style="margin-bottom : 35px;padding-left: 0; padding-right : 0;">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                    </div>
+                </div><br><br>
+                <div class="portlet-body form">
+                    <div class="col-md-12 garisatas" style="margin-top: 5px"></div>
+                    <div class="col-md-12 garisatas2"></div>
+                    <table id="tabel" class="table table-striped table-bordered ">
+                        <thead>
+                            <tr style="background-color: #e4e4e4;height: 40px;border: 2px #e4e4e4 solid;">
+                                <!-- <th class="tengah">No</th> -->
+                                <th class="kiri" style="width: 100px;">Date</th>
+                                <th class="kiri">Session ID</th>
+                                <th class="kiri">DAX Name</th>
+                                <th class="kiri">DAX Type</th>
+                                <th class="kiri">DAX Status</th>
+                                <th class="kiri">Service</th>
+                                <th class="kiri">KiosK Location</th>
+                                <th class="kiri">Start</th>
+                                <th class="kiri">Finish</th>
+                                <th class="kiri">Status</th>
+                                <th class="kiri">Detail</th>
+                                <th class="kiri">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listData" class="list" style="color: black;font-weight: 800;text-align: left;border: 2px #e4e4e4 solid;">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
-        <!-- /.tabel -->
-        <div class="col-md-12 garisatas" style="margin-top: 5px"></div>
-        <div class="col-md-12 garisatas2"></div>
-        <table id="tabel" class="table table-striped table-bordered ">
-            <thead>
-                <tr style="background-color: #e4e4e4;height: 40px;border: 2px #e4e4e4 solid;">
-                    <!-- <th class="tengah">No</th> -->
-                    <th class="tengah">Date</th>
-                    <th class="tengah">Session ID</th>
-                    <th class="tengah">DAX Name</th>
-                    <th class="tengah">DAX Type</th>
-                    <th class="tengah">DAX Status</th>
-                    <th class="tengah">Service</th>
-                    <th class="tengah">KiosK Location</th>
-                    <th class="tengah">Start</th>
-                    <th class="tengah">Finish</th>
-                    <th class="tengah">Status</th>
-                    <th class="tengah">Detail</th>
-                    <th class="tengah">Action</th>
-                </tr>
-            </thead>
-            <tbody id="listData" class="list" style="color: black;font-weight: 800;text-align: center;border: 2px #e4e4e4 solid;">
-            </tbody>
-        </table>
+
+
     </div>
 </div>
+<?= $this->endSection() ?>
 
+<?= $this->section('js') ?>
 <script>
     var loading = false;
     $(function() {
 
         $('body').on('click', '.end_session', function() {
-            console.log($(this).closest('tr').find('.sts_trx').val());
+            //console.log($(this).closest('tr').find('.sts_trx').val());
             if ($(this).closest('tr').find('.sts_trx').val() == 2) {
 
-                end_session($(this).closest('td').find('.sessionid').val());
+                muncul($(this).closest('td').find('.id_trx').val());
+                // end_session($(this).closest('td').find('.id_trx').val());
             } else {
                 alert('transaksi sudah selesai.');
             }
         })
 
         $('body').on('click', '.view_document', function() {
-            // console.log($(this).closest('tr').find('.sessionid').val());
-            view_dokumen($(this).closest('tr').find('.sessionid').val());
+            //console.log($(this).closest('tr').find('.id_trx').val());
+            view_dokumen($(this).closest('tr').find('.id_trx').val());
         })
 
-        function end_session(sessionid) {
+        function muncul(id_trx) {
+            var link = '<?= site_url('handling/updates_selesai') ?>';
 
-            $.get('<?= site_url() ?>' + '/service/updates_selesai', {
-                sessionid: sessionid
+            $('.gae_popup').attr('href', link + '/' + id_trx + '/' + 'Y');
+            $('.tidak_tampil').attr('href', link + '/' + id_trx + '/' + 'N');
+
+            $('.finish').modal();
+        }
+
+        function end_session(id_trx) {
+
+            $.get('handling/updates_selesai', {
+                id_trx: id_trx
             }, function(respon) {
                 var str = '';
                 if (respon.status == 'sukses') {
@@ -153,7 +210,7 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: '<?= site_url("service/get_list_report"); ?>'
+                url: '<?php echo site_url("handling/get_list_report"); ?>'
             },
             paginationType: "full_numbers",
             lengthMenu: [
@@ -236,12 +293,11 @@
                 },
 
             ],
-            language: {
-                processing: '<img src="<?php echo base_url("assets/loading2.gif"); ?>"><br><p style="margin-top:-5px;">Loading</p>'
-            }
+            "oLanguage": {
+                "sProcessing": '<img src="<?php echo base_url("assets/loading2.gif"); ?>"><br><p style="margin-top:-5px;">Loading</p>'
+            },
         });
 
-        console.log(oTable);
 
         $('.download_all').click(function() {
             var a = $(".ijen");
@@ -297,9 +353,9 @@
         // });
 
 
-        function view_dokumen(sessionid) {
+        function view_dokumen(id_trx) {
             $.post('<?= site_url() ?>' + '/service/view_dokumen', {
-                sessionid: sessionid,
+                id_trx: id_trx,
                 // hayo : '<?= encode(hayo()) ?>',
                 '<?= csrf_token() ?>': '<?= csrf_hash() ?>'
             }, function(respon) {
@@ -310,11 +366,11 @@
                         // console.log(row)
                         str += '<div class="row tekan" style="cursor : pointer;" data-file="' + row.image + '"  >' +
                             // '<div class="col-md-10">'+
-                            '<input type="hidden" class="sessionid" value="sessionid">' +
-                            '<img src="' + row.image + '" />' +
+                            '<input type="hidden" class="id_trx" value="id_trx">' +
+                            '<img src="' + row.image + '" style="width : 100% ; height : 100%;" />' +
 
                             '<a href="' + row.image + '" class="ijen" download>' +
-                            '<img src="' + row.image + '"  data-file="' + row.image + '" /></a>' +
+                            '</a>' +
                             '</div>';
                     })
 
@@ -327,5 +383,4 @@
         }
     })
 </script>
-
 <?= $this->endSection() ?>

@@ -91,5 +91,6 @@ class BaseController extends Controller
 		$this->m_upd = new Upd();
 		$this->m_user = new User();
 		$this->m_user_role = new UserRole();
+
 	}
 }

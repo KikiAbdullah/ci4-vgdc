@@ -96,19 +96,20 @@
     $(function() {
 
         var oTable = $('#tabel').dataTable({
-            "bProcessing": true,
-            "bServerSide": true,
-            "sAjaxSource": '<?php echo site_url("service/get_list_report"); ?>', //mengambil data ke controller datatable fungsi getdata
-            "sPaginationType": "full_numbers",
-            "aLengthMenu": [
-                [15, 30, 75, -1],
-                [15, 30, 75, "All"]
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '<?php echo site_url("service/get_list_report"); ?>'
+            },
+            paginationType: "full_numbers",
+            lengthMenu: [
+                [15, 30, 75],
+                [15, 30, 75]
             ],
-            "iDisplayStart ": 15,
-            "ordering": false,
-            "columns": [{
-                    "data": "tanggal",
-                    "render": function(data, type, row) {
+            ordering: false,
+            columns: [{
+                    data: "tanggal",
+                    render: function(data, type, row) {
                         var date = new Date(data);
                         yr = date.getFullYear(),
                             month = date.getMonth() + 1,
@@ -119,81 +120,55 @@
                     }
                 },
                 {
-                    "data": "sessionid"
+                    data: "sessionid"
                 },
                 {
-                    "data": "nm_driver"
+                    data: "nm_driver"
                 },
                 {
-                    "data": "nm_jenis"
+                    data: "nm_jenis"
                 },
                 {
-                    "data": "nm_tipe"
+                    data: "nm_tipe"
                 },
                 {
-                    "data": "nm_layanan"
+                    data: "nm_layanan"
                 },
                 {
-                    "data": "lokasi"
+                    data: "lokasi"
                 },
                 {
-                    "data": "wkt_mulai"
+                    data: "wkt_mulai"
                 },
                 {
-                    "data": "wkt_selesai"
+                    data: "wkt_selesai"
                 },
                 {
-                    "data": "id_csat",
-                    "render": function(data, type, row) {
+                    data: "id_csat",
+                    render: function(data, type, row) {
                         if (data == 1) {
-                            return '<img src="<?= base_url('uploads/skp/tidak-puas.png'); ?> "style="width: 30px;">';
+                            return '<img src="<?= base_url('assets/upload/tidak-puas.png'); ?> "style="width: 30px;">';
                         }
                         if (data == 2) {
-                            return '<img src="<?= base_url('uploads/skp/kurang-puas.png'); ?>" style="width: 30px;">';
+                            return '<img src="<?= base_url('assets/upload/kurang-puas.png'); ?>" style="width: 30px;">';
                         } else if (data == 3) {
-                            return '<img src="<?= base_url('uploads/skp/puas.png'); ?>" style="width: 30px;">';
+                            return '<img src="<?= base_url('assets/upload/puas.png'); ?>" style="width: 30px;">';
                         } else if (data == 4) {
-                            return '<img src="<?= base_url('uploads/skp/cukup-puas.png'); ?>" style="width: 30px;">';
+                            return '<img src="<?= base_url('assets/upload/cukup-puas.png'); ?>" style="width: 30px;">';
                         } else if (data == 5) {
-                            return '<img src="<?= base_url('uploads/skp/sangat-puas.png'); ?>" style="width: 30px;">';
+                            return '<img src="<?= base_url('assets/upload/sangat-puas.png'); ?>" style="width: 30px;">';
                         } else {
                             return '';
                         }
                     }
                 },
                 {
-                    "data": "id_csat"
+                    data: "id_csat"
                 },
             ],
-            "oLanguage": {
-                "sProcessing": '<img src="<?php echo base_url("assets/loading2.gif"); ?>"><br><p style="margin-top:-5px;">Loading</p>'
-            },
-            "fnInitComplete": function() {
-                //oTable.fnAdjustColumnSizing();
-                $('#tabel_length').css('margin-top', -60);
-                $('#tabel_filter').css('margin-top', -60);
-            },
-            'fnServerData': function(sSource, aoData, fnCallback) {
-                var csrf = {
-                    "name": '<?= csrf_token() ?>',
-                    "value": '<?= csrf_hash() ?>',
-                };
-                aoData.push(csrf);
-
-                var csrf = {
-                    "name": 'hayo',
-                    "value": '<?= encode(hayo()) ?>',
-                };
-                aoData.push(csrf);
-                $.ajax({
-                    'dataType': 'json',
-                    'type': 'GET',
-                    'url': sSource,
-                    'data': aoData,
-                    'success': fnCallback
-                });
+            language: {
+                processing: '<img src="<?php echo base_url("assets/loading2.gif"); ?>"><br><p style="margin-top:-5px;">Loading</p>'
             }
-
         });
         $('#tabel').on('draw.dt', function() {
             // reloadbutton();

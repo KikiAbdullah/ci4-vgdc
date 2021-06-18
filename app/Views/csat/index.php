@@ -93,16 +93,6 @@
                 </tr>
             </thead>
             <tbody id="listData" class="list" style="color: black;font-weight: 800;text-align: center;border: 2px #e4e4e4 solid;">
-                <!-- <?php for ($i = 1; $i < 6; $i++) { ?>
-                    <tr>
-                        <td><?= $i ?></td>
-                        <td>Muhammad Adam Ibrahim</td>
-                        <td>Change ID Card Number</td>
-                        <td>Malang</td>
-                        <td><span class="tmbl tmbl-ijo">20:00:00</span></td>
-                        <td><a href="<?= site_url('dashboard/detail_report') ?>"><img src="<?= base_url('assets/icon_mekar.png'); ?>" style="width: 30px;"></a></td>
-                    </tr>
-                <?php } ?> -->
             </tbody>
         </table>
     </div>
@@ -114,17 +104,18 @@
 <script>
     var loading = false;
     $(function() {
-        // get_list();
-        // setInterval(() => {
-        //     get_list();
-        // }, 3000);
-
         var oTable = $('#tabel').dataTable({
             processing: true,
             serverSide: true,
             ajax: {
                 url: '<?php echo site_url("service/get_list_report"); ?>'
             },
+            paginationType: "full_numbers",
+            lengthMenu: [
+                [15, 30, 75],
+                [15, 30, 75]
+            ],
+            ordering: false,
             columns: [{
                     data: "tanggal",
                     render: function(data, type, row) {
@@ -184,7 +175,9 @@
                     data: "id_csat"
                 },
             ],
-
+            language: {
+                processing: '<img src="<?php echo base_url("assets/loading2.gif"); ?>"><br><p style="margin-top:-5px;">Loading</p>'
+            }
         });
         $('#tabel').on('draw.dt', function() {
             // reloadbutton();
