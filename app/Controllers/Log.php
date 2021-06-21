@@ -5,8 +5,13 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use Irsyadulibad\DataTables\DataTables;
 
-class Log extends BaseController
+class Log extends AdminController
 {
+    function __construct()
+    {
+        parent::__construct();
+    }
+
     public function index()
     {
         // lakukan validasi

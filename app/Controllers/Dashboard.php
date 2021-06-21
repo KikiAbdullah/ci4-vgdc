@@ -7,18 +7,18 @@ use App\Models\Gdc;
 use App\Models\Layanan;
 use App\Models\Transaksi;
 
-class Dashboard extends BaseController
+class Dashboard extends AdminController
 {
     public function __construct()
     {
+        parent::__construct();
+
         $this->m_cs = new Cs();
         $this->m_gdc = new Gdc();
         $this->m_layanan = new Layanan();
         $this->m_transaksi = new Transaksi();
 
         $this->cname = 'dashboard';
-
-        $this->user = session()->get('user_login_vgdc');
     }
 
     public function index()

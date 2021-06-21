@@ -2,15 +2,16 @@
 
 namespace App\Controllers;
 
-use App\Models\Log;
-use App\Models\Menu;
-use App\Models\User;
-use App\Models\UserRole;
 use CodeIgniter\HTTP\RequestInterface;
 use DateTime;
 
-class Login extends BaseController
+class Login extends AdminController
 {
+    function __construct()
+    {
+        parent::__construct();
+    }
+
     public function index()
     {
         return view('auth/login');

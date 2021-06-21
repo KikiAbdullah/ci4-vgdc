@@ -2,10 +2,13 @@
 
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
-
-class Csat extends BaseController
+class Csat extends AdminController
 {
+    function __construct()
+    {
+        parent::__construct();
+    }
+    
     public function index()
     {
         // lakukan validasi

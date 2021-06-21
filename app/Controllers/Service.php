@@ -2,15 +2,19 @@
 
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
-use App\Models\Transaksi;
+
 use CodeIgniter\Exceptions\PageNotFoundException;
 use Config\Services;
 use Hermawan\DataTables\DataTable;
 use Irsyadulibad\DataTables\DataTables;
 
-class Service extends BaseController
+class Service extends AdminController
 {
+	function __construct()
+	{
+		parent::__construct();
+	}
+
 	public function get_tipejenis()
 	{
 		$hayo = @$_REQUEST['hayo'];

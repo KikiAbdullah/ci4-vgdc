@@ -2,11 +2,15 @@
 
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
 use Irsyadulibad\DataTables\DataTables;
 
-class Handling extends BaseController
+class Handling extends AdminController
 {
+    function __construct()
+    {
+        parent::__construct();
+    }
+
     public function index()
     {
         // lakukan validasi
