@@ -279,13 +279,18 @@
                     }
                 },
                 {
-                    data: "action"
+                    render: function(data, type, row) {
+                        if ('<?= $akses[2] ?>' != '') {
+                            html = '<input class="id_trx" type="hidden" name="id_trx" value="' + row['id_trx'] + '"/><button class="view_document"  style="border : 0!important; background-color : transparent!important;" type="submit"><img src=' + "<?= base_url('assets/icon_mekar.png') ?>" + ' style="width: 30px;"></button></form>';
+                        }
+                        return html;
+                    }
                 },
                 {
-                    data: "actions",
                     render: function(data, type, row) {
                         if (row.sts_trx == 2) {
-                            return data;
+                            html = "<input class='id_trx' type='hidden' name='id_trx' value='" + row['id_trx'] + "'/><button class='btn end_session' style='background-color : #009a3c;color :azure; border-radius : 5px;'>Selesai </button>";
+                            return html;
                         } else {
                             return '<span class="text-danger">CLOSED</span>';
                         }
@@ -294,7 +299,7 @@
 
             ],
             "oLanguage": {
-                "sProcessing": '<img src="<?php echo base_url("assets/loading2.gif"); ?>"><br><p style="margin-top:-5px;">Loading</p>'
+                "sProcessing": '<img src="<?= base_url("assets/loading2.gif"); ?>"><br><p style="margin-top:-5px;">Loading</p>'
             },
         });
 

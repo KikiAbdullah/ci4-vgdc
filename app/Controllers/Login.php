@@ -2,19 +2,27 @@
 
 namespace App\Controllers;
 
+use App\Models\Log;
+use App\Models\Menu;
+use App\Models\User;
 use CodeIgniter\HTTP\RequestInterface;
 use DateTime;
 
-class Login extends AdminController
+class Login extends BaseController
 {
-    function __construct()
+    public function __construct()
     {
-        parent::__construct();
+        $this->m_log = new Log();
+        $this->m_user = new User();
+        $this->m_menu = new Menu();
     }
-
     public function index()
     {
-        return view('auth/login');
+        if (!empty($this->session->get('user_login_vgdc'))) {
+            return redirect()->to('dashboard');
+        } else {
+            return view('auth/login');
+        }
     }
 
     public function proses()

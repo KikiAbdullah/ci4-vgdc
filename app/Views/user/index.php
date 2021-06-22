@@ -148,6 +148,26 @@
 
 <?= $this->section('js') ?>
 <script type="text/javascript">
+    function reloadbutton() {
+        $('.tombolEdit').each(function() {
+            var id = $(this).data('id');
+            // alert(id);
+            encodedString = btoa(id).replace('==', '').replace('=', '');
+            // alert(encodedString);
+            var link = $(this).attr('href');
+            $(this).attr('href', link + '/' + encodedString);
+        });
+
+
+        $('.tombolHapus').each(function() {
+            var id = $(this).data('id');
+            //alert(id);
+            encodedString = btoa(id).replace('==', '').replace('=', '');
+            var link = "<?= site_url('user/hapus'); ?>";
+            $(this).attr('onclick', "hapus('" + link + '/' + encodedString + "');");
+        });
+    }
+
     $(document).ready(function() {
 
         var oTable = $('#tabel').dataTable({
@@ -189,10 +209,16 @@
                     }
                 },
                 {
-                    data: "action",
                     render: function(data, type, row) {
-                        var html = '<input class="id_temp" type="hidden" name="id_temp" value="' + row['id_user'] +
-                            '"/><button class="btn detail" style="background-color : #009a3c;color :azure; border-radius : 5px;">Approvement </button>';
+                        var html = '';
+                        if ('<?= $akses[2] ?>' != '') {
+                            var html = "<a class='' title='Edit' href=" + '<?= site_url('user/edit/') ?>' + row['id_user'] + "'><img src=" + '<?= base_url('assets/edit.png') ?>' + " style='width: 30px;'></a>&nbsp;";
+                        }
+
+                        if ('<?= $akses[3] ?>' != '') {
+                            var html = html + "<a class='tombolHapus' title='Hapus' href='#' data-id='" + row['id_user'] +
+                                "'><img src=" + '<?= base_url('assets/delete.png') ?>' + " style='width: 30px;'></a>";
+                        }
                         return html;
                     }
                 }
@@ -204,7 +230,7 @@
 
 
         $('#tabel').on('draw.dt', function() {
-            // reloadbutton();
+            reloadbutton();
             $('.make-switch').bootstrapSwitch();
         });
 

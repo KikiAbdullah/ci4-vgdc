@@ -119,6 +119,26 @@ License: You must have a valid license purchased only from themeforest(the above
                     </div>
                 </div>
                 <?= $this->renderSection('content') ?>
+
+                <div class="modal fade bs-modal-sm" id="small" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <br>
+                                <h4 id="myModalLabel" class="bold">Perhatian!</h4>
+                                <p class="no-margin">Menghapus data ini mungkin akan berpengaruh ke beberapa data. Apakah anda yakin akan menghapus data ini?</p>
+                                <br>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-white" data-dismiss="modal">Batal</button>
+                                <a href="#" id="linkHapus" class="btn btn-danger">Hapus Data</a>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
             </div>
             <!-- END CONTENT BODY -->
             <div class="modal fade bs-modal-sm" id="small" tabindex="-1" role="dialog" aria-hidden="true">
@@ -146,6 +166,8 @@ License: You must have a valid license purchased only from themeforest(the above
     <!-- END CONTAINER -->
     <?= $this->include('layouts/footer') ?>
     <!-- BEGIN CORE PLUGINS -->
+
+
 
 
     <script src="<?= base_url('assets/template/assets/global/plugins/js.cookie.min.js') ?>" type="text/javascript"></script>
@@ -194,6 +216,46 @@ License: You must have a valid license purchased only from themeforest(the above
     <script src="<?= base_url('assets/template/assets/global/plugins/bootstrap/js/bootstrap.min.js') ?>" type="text/javascript"></script>
 
     <!-- END THEME LAYOUT SCRIPTS -->
+    <script type="text/javascript">
+        function hapus(uri) {
+            $('#linkHapus').attr('href', uri);
+            $('#small').modal();
+        }
+
+        $(document).ready(function() {
+            var idleTime = 0;
+            $('.select2').select2();
+            $('.select2.readonly').select2({
+                disabled: 'readonly'
+            });
+            //Increment the idle time counter every minute.
+
+            var with_timer = true;
+
+
+            if (with_timer) {
+                var idleInterval = setInterval(timerIncrement, 60000); // 1 minute
+            }
+
+            //Zero the idle timer on mouse movement.
+            $(this).mousemove(function(e) {
+                idleTime = 0;
+            });
+
+            $(this).keypress(function(e) {
+                idleTime = 0;
+            });
+
+
+            function timerIncrement() {
+                idleTime = idleTime + 1;
+                console.log(idleTime);
+                if (idleTime >= 30) { // 2 minutes
+                    window.location.href = '<?= base_url('login/logout_idle') ?>';
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

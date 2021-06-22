@@ -62,7 +62,7 @@
                             </div>
                         </div>
                         <div class="portlet-body form">
-                            <form role="form" action="<?= site_url('monitoring/index') ?>" method="post">
+                            <form role="form" action="<?= site_url('monitoring') ?>" method="post">
                                 <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>">
                                 <div class="form-body">
                                     <div class="form-group col-md-8">
@@ -73,28 +73,23 @@
                                             <input type="text" class="form-control" name="tanggal_akhir" autocomplete="off" value="<?= @$filter['tanggal_akhir']; ?>">
                                         </div>
                                     </div>
-
                                     <div class="form-group col-md-2">
-                                        <label style="color: white;">-</label>
+                                        <label style="color: white;">Service</label>
                                         <a class="btn default" style="width : 100%;" href="<?= site_url('monitoring/reset_filter') ?>"><i class="fa fa-refresh"></i> Reset</a>
                                     </div>
                                     <div class="form-group col-md-2">
-                                        <label style="color: white;">-</label>
-                                        <button type="submit" class="btn blue" style="border :0;background-color : #007024; width : 100%;"><i class="fa fa-search"></i> Cari</button>
-                                    </div>
-                                    <!-- <?php if (!empty($this->akses[4])) { ?>
-                                        <a class="btn blue" style="width : 100%;"href="<?= site_url('monitoring/export_excel_csat') ?>"><i class="fa fa-file-excel-o"></i> Export</a>
-                                    <?php } ?> -->
+                                        <label style="color: white;">Service</label>
+                                        <button type="submit" class="btn blue" style="border :0;background-color : #007024; width : 100%;"><i class="fa fa-search"></i> Apply</button>
+                                    </div><br />
+
+                                    <br /><br /><br /><br />
                                 </div>
-                                <br /><br /><br />
+                            </form>
                         </div>
-                        </form>
                     </div>
                 </div>
                 <!-- END SAMPLE FORM PORTLET-->
             </div>
-
-
         </div>
         <div class="col-md-12 garisatas" style="margin-top: 5px"></div>
         <div class="col-md-12 garisatas2"></div>

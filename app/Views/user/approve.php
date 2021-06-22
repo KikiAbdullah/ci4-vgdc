@@ -107,22 +107,11 @@
                     data: "user_role"
                 },
                 {
-                    render: function(data, type, row) {
-                        if ('<?= $akses[2] ?>' != '') {
-                            var html = "<a class='tombolEdit' title='Edit' href=" + '<?= site_url('user/edit/') ?>' + " data-id='" + row['id_user_temp'] +
-                                "'><img src=" + '<?= base_url('assets/edit.png') ?>' + " style='width: 30px;'></a>&nbsp;";
-                        }
-
-                        if ('<?= $akses[3] ?>' != '') {
-                            var html = "<a class='tombolHapus' title='Hapus' href='#' data-id='" + row['id_user_temp'] +
-                                "'><img src=" + '<?= base_url('assets/delete.png') ?>' + " style='width: 30px;'></a>";
-                        }
-                        return html;
-                    }
+                    data: "a"
                 },
                 {
                     render: function(data, type, row) {
-                        return '<input class="id_temp" type="hidden" name="id_temp" value="' + row['id_user_temp'] + '"/><button class="btn detail" style="background-color:#009a3c; color:azure; border-radius: 5px;"> Approvement </button>'
+                        return '<input class="id_temp" type="hidden" name="id_temp" value="' + row['id_temp'] + '"/><button class="btn detail" style="background-color:#009a3c; color:azure; border-radius: 5px;"> Approvement </button>'
                     }
                 }
             ],
@@ -159,6 +148,31 @@
                     // get_list();
                 }
             }
+        });
+    }
+
+    function hapus(uri) {
+        $('#linkHapus').attr('href', uri);
+        $('#small').modal();
+    }
+
+    function reloadbutton() {
+        $('.tombolEdit').each(function() {
+            var id = $(this).data('id');
+            // alert(id);
+            encodedString = btoa(id).replace('==', '').replace('=', '');
+            // alert(encodedString);
+            var link = $(this).attr('href');
+            $(this).attr('href', link + '/' + encodedString);
+        });
+
+
+        $('.tombolHapus').each(function() {
+            var id = $(this).data('id');
+            //alert(id);
+            encodedString = btoa(id).replace('==', '').replace('=', '');
+            var link = "<?= site_url('user/hapus'); ?>";
+            $(this).attr('onclick', "hapus('" + link + '/' + encodedString + "');");
         });
     }
 </script>

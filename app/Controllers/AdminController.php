@@ -26,6 +26,7 @@ class AdminController extends BaseController
 {
     public function __construct()
     {
+
         // load model
         $this->m_cs = new Cs();
         $this->m_dokumen = new Dokumen();
@@ -46,8 +47,6 @@ class AdminController extends BaseController
         $this->m_user = new User();
         $this->m_user_role = new UserRole();
         $this->m_user_temp = new UserTemp();
-
-        $this->uri = new \CodeIgniter\HTTP\URI();
 
 
         $this->user = session()->get('user_login_vgdc');

@@ -8,7 +8,7 @@ class Csat extends AdminController
     {
         parent::__construct();
     }
-    
+
     public function index()
     {
         // lakukan validasi
@@ -48,7 +48,7 @@ class Csat extends AdminController
     public function reset_filter()
     {
         $this->session->remove('filter');
-        return redirect()->to('csat/report');
+        return redirect()->to('csat');
     }
 
     public function reset_filter_csat()

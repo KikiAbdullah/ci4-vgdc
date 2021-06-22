@@ -26,6 +26,8 @@ class Handling extends AdminController
         $data['gdc'] = $this->m_gdc->findAll();
         $data['layanan'] = $this->m_layanan->findAll();
 
+        $data['akses'] = $this->akses;
+
         return view('handling/index', $data);;
     }
 
@@ -56,17 +58,6 @@ class Handling extends AdminController
             ->join('jenis_driver', 'transaksi.id_jenis = jenis_driver.id_jenis', 'left')
             ->join('tipe_driver', 'transaksi.id_tipe = tipe_driver.id_tipe', 'left')
             ->join('csat', 'transaksi.id_csat = csat.id_csat', 'left')
-            ->addColumn('action', function ($data) {
-                $html = "";
-                if (!empty($this->akses[2])) {
-                    $html = '<input class="id_trx" type="hidden" name="id_trx" value="' . $data->id_trx . '"/><button class="view_document"  style="border : 0!important; background-color : transparent!important;" type="submit"><img src="' . base_url('assets/icon_mekar.png') . '" style="width: 30px;"></button></form>';
-                }
-                return $html;
-            })
-            ->addColumn('actions', function ($data) {
-                $html = "<input class='id_trx' type='hidden' name='id_trx' value='' . $data->id_trx . ''/><button class='btn end_session' style='background-color : #009a3c;color :azure; border-radius : 5px;'>Selesai </button>";
-                return $html;
-            })
             ->where(@$where1)
             ->where(@$where2)
             ->make(true);

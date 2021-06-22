@@ -21,7 +21,7 @@
                         </div>
                     </div>
                     <div class="portlet-body form">
-                        <form role="form" action="<?= site_url('csat/report_csat') ?>" method="post">
+                        <form role="form" action="<?= site_url('csat') ?>" method="post">
                             <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>">
                             <div class="form-body">
                                 <div class="form-group col-md-4">
@@ -50,7 +50,7 @@
                                 </div>
                                 <div class="form-group col-md-2">
                                     <label style="color: white;">Service</label>
-                                    <a class="btn default" style="width : 100%;" href="<?= site_url('csat/reset_filter_csat') ?>"><i class="fa fa-refresh"></i> Reset</a>
+                                    <a class="btn default" style="width : 100%;" href="<?= site_url('csat/reset_filter') ?>"><i class="fa fa-refresh"></i> Reset</a>
                                 </div>
                                 <div class="form-group col-md-2">
                                     <label style="color: white;">Service</label>
