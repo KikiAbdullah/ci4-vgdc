@@ -73,4 +73,14 @@ class Validation
 			'max_length'    => 'Password maksimal terdiri dari 14 karakter'
 		]
 	];
+
+	public $update = [
+		'username' => 'trim|required|valid_data',
+		'nama' => 'trim|required|valid_data',
+		'email' => 'trim|required|valid_data'
+	];
+
+	public $store_user_role = [
+		'user_role' => 'trim|required|is_exist[{id},user_role]'
+	];
 }

@@ -14,7 +14,17 @@ class UserRole extends Model
 	protected $returnType           = 'array';
 	protected $useSoftDeletes       = false;
 	protected $protectFields        = true;
-	protected $allowedFields        = [];
+	protected $allowedFields        = [
+		'user_role',
+		'menu_akses',
+		'jenis',
+		'created_at',
+		'created_by',
+		'modified_at',
+		'modified_by',
+		'approved_at',
+		'approved_by',
+	];
 
 	// Dates
 	protected $useTimestamps        = false;

@@ -146,6 +146,26 @@
 <script type="text/javascript">
     $(document).ready(function() {
 
+        function reloadbutton() {
+            $('.tombolEdit').each(function() {
+                var id = $(this).data('id');
+                // alert(id);
+                encodedString = btoa(id).replace('==', '').replace('=', '');
+                // alert(encodedString);
+                var link = $(this).attr('href');
+                $(this).attr('href', link + '/' + encodedString);
+            });
+
+
+            $('.tombolHapus').each(function() {
+                var id = $(this).data('id');
+                //alert(id);
+                encodedString = btoa(id).replace('==', '').replace('=', '');
+                var link = "<?= site_url('user_role/hapus'); ?>";
+                $(this).attr('onclick', "hapus('" + link + '/' + encodedString + "');");
+            });
+        }
+
         var oTable = $('#tabel').dataTable({
             processing: true,
             serverSide: true,
@@ -166,13 +186,14 @@
                 },
                 {
                     render: function(data, type, row) {
+                        var html = '';
                         if ('<?= $akses[2] ?>' != '') {
-                            var html = "<a class='tombolEdit' title='Edit' href=" + '<?= site_url('user/edit/') ?>' + " data-id='" + row['id_user_role'] +
+                            var html = "<a class='tombolEdit' title='Edit' href=" + '<?= site_url('user_role/edit') ?>' + " data-id='" + row['id_user_role'] +
                                 "'><img src=" + '<?= base_url('assets/edit.png') ?>' + " style='width: 30px;'></a>&nbsp;";
                         }
 
                         if ('<?= $akses[3] ?>' != '') {
-                            var html = "<a class='tombolHapus' title='Hapus' href='#' data-id='" + row['id_user_role'] +
+                            var html = html + "<a class='tombolHapus' title='Hapus' href='#' data-id='" + row['id_user_role'] +
                                 "'><img src=" + '<?= base_url('assets/delete.png') ?>' + " style='width: 30px;'></a>";
                         }
                         return html;
@@ -185,7 +206,7 @@
         });
 
         $('#tabel').on('draw.dt', function() {
-            // reloadbutton();
+            reloadbutton();
         });
 
     });

@@ -44,17 +44,13 @@ class User extends AdminController
 
     function do_tambah()
     {
-        // lakukan validasi
-        // $validation =  \Config\Services::validation();
-        // $isDataValid = $validation->withRequest($this->request)->run();
-
         $data = @$this->request->getPost();
         // $data = $this->security->xss_clean($data);
         if ($data) {
             if ($this->form_validation->run($data, 'register') == FALSE) {
                 // mengembalikan nilai input yang sudah dimasukan sebelumnya
-                session()->setFlashdata('inputs', $this->request->getPost());
-
+                session()->setFlashdata('postdata', $this->request->getPost());
+                dd($this->form_validation->getErrors());
                 // kembali ke halaman form
                 // $this->session->setFlashdata('msg', warn_msg($this->form_validation->getErrors()));
                 return redirect()->to('user');
@@ -109,6 +105,122 @@ class User extends AdminController
         }
 
         $this->templates->display('user/user');
+    }
+
+    function edit($id = NULL)
+    {
+        $data['user_role'] = $this->m_user_role->findAll();
+        $data['item'] = $this->m_user->find($id);
+        return view('user/edit', $data);
+    }
+
+    function do_ubah()
+    {
+        $data = @$this->request->getPost();
+        // $data = $this->security->xss_clean($data);
+        if ($data) {
+            if ($this->form_validation->run($data, 'update') == FALSE) {
+                // mengembalikan nilai input yang sudah dimasukan sebelumnya
+                session()->setFlashdata('postdata', $this->request->getPost());
+                dd($this->form_validation->getErrors());
+                // kembali ke halaman form
+                // $this->session->setFlashdata('msg', warn_msg($this->form_validation->getErrors()));
+                return redirect()->to('user');
+            } else {
+                if ($data['password'] != '' && $data['confirm_password']) {
+
+                    $datapass = $this->m_user_temp->select('password')
+                        ->where('id_user', $data['id_user'])
+                        ->orderBy('id_temp', 'desc')
+                        ->findAll(5);
+
+                    foreach ($datapass as $key => $v) {
+                        if ($v['password'] == md5($data['password'])) {
+                            $this->session->setFlashdata('msg', warn_msg('Password sudah pernah digunakan.'));
+                            return redirect()->to('user');
+                        }
+                    }
+
+
+                    if ($data['password'] != $data['confirm_password']) {
+                        $this->session->setFlashdata('postdata', (object)$this->input->post());
+                        $this->session->setFlashdata('msg', warn_msg('Bidang <b>Password</b> dan <b>Confirm Password</b> tidak sama'));
+                        return redirect()->to('user');
+                    }
+                    $password = md5($data['password']);
+                    $data['password'] = $password;
+                    unset($data['confirm_password']);
+                    $tgl1 = date('Y-m-d');
+                    $data['pwd_created'] = $tgl1;
+                    $data['pwd_exp'] = date('Y-m-d', strtotime('+3 month', strtotime($tgl1)));
+                } else {
+                    $passwordlama = $this->m_user->find($data['id_user'])['password'];
+
+                    unset($data['confirm_password']);
+                    $data['password'] = $passwordlama;
+                }
+                unset($data['ci_csrf_token']);
+                $wkt = date('Y-m-d H:i:s');
+                $data['created_at'] = $wkt;
+                $data['created_by'] = $this->session->get('user_login_vgdc')['nama'];
+                $data['is_approved'] = 'N';
+                $data['approval_tipe'] = '2';
+                $data['is_done'] = 'N';
+
+                $proses2 = $this->m_user_temp->insert(@$data);
+                if ($proses2) {
+
+                    $log = array('id_user' => $this->session->get('user_login_vgdc')['id_user'], 'aktivitas' => '8', 'tanggal' => date('Y-m-d'), 'waktu' => date('H:i:s'), 'keterangan' => 'Success modify user : ' . $data['nama']);
+                    $this->m_log->insert($log);
+
+                    $this->session->setFlashdata('msg', succ_msg('Data berhasil diubah.Mohon Tunggu Proses Approval Administrator.'));
+                } else {
+                    $this->session->setFlashdata('msg', err_msg('Gagal mengubah data.'));
+                }
+                return redirect()->to('user');
+            }
+        } else {
+            show_404();
+        }
+    }
+
+
+    function hapus($id = NULL)
+    {
+        if (!$id) show_404();
+        $data = $this->m_user->find(decode($id));
+        if (empty($data)) {
+            show_404();
+        }
+
+        $nm = $data['nama'];
+        $datad['id_user'] = $data['id_user'];
+        $datad['username'] = $data['username'];
+        $datad['password'] = $data['password'];
+        $datad['nama'] = $data['nama'];
+        $datad['id_user_role'] = $data['id_user_role'];
+        $datad['email'] = $data['email'];
+        $datad['status'] = $data['status'];
+        $datad['pwd_created'] = $data['pwd_created'];
+        $datad['pwd_exp'] = $data['pwd_exp'];
+        $wkt = date('Y-m-d H:i:s');
+        $datad['created_at'] = $wkt;
+        $datad['created_by'] = session()->get('user_login_vgdc')['nama'];
+        $datad['is_approved'] = 'N';
+        $datad['approval_tipe'] = '3';
+        $datad['is_done'] = 'N';
+
+        $proses2 = $this->m_user_temp->insert(@$datad);
+        $log = array('id_user' => session()->get('user_login_vgdc')['id_user'], 'aktivitas' => '9', 'tanggal' => date('Y-m-d'), 'waktu' => date('H:i:s'), 'keterangan' => 'Success delete user : ' . $nm);
+        $this->m_log->insert($log);
+
+        if ($proses2) {
+            $this->session->setFlashdata('msg', succ_msg('Data User Akan Dihapus Setelah Disetujui oleh Admin.'));
+        } else {
+            $this->session->setFlashdata('msg', err_msg('Gagal menghapus.'));
+        }
+
+        return redirect()->to('user');
     }
 
     public function approved($id_temp = '', $apr = '')
@@ -198,6 +310,7 @@ class User extends AdminController
                 $this->m_user_temp->update($id_temp, $update_user_temp);
 
                 $get_id = $this->m_user_temp->find($id_temp)['id_user'];
+
                 $hapus = $this->m_user->delete($get_id);
                 if ($hapus) {
                     $this->session->setFlashdata('msg', succ_msg('Penghapusan Data User Telah Disetujui.'));
@@ -208,69 +321,25 @@ class User extends AdminController
         } else {
             $wkt = date('Y-m-d H:i:s');
 
-            $update_gdc_temp =  [
+            $update_user_temp =  [
                 'approved_at' => $wkt,
                 'approved_by' => $this->session->get('user_login_vgdc')['id_user'],
                 'is_approved' => $apr,
                 'is_done' => 'Y'
             ];
-            $this->m_gdc_temp->update($id_temp, $update_gdc_temp);
+            $this->m_user_temp->update($id_temp, $update_user_temp);
 
-            $this->session->setFlashdata('msg', succ_msg('Penambahan/Perubahan Data GDC Kiosk Tidak Disetujui.'));
+            $this->session->setFlashdata('msg', succ_msg('Penambahan/Perubahan Data User Tidak Disetujui.'));
 
             $log = array(
                 'id_user' => $this->session->get('user_login_vgdc')['id_user'],
                 'aktivitas' => '18',
                 'tanggal' => date('Y-m-d'),
                 'waktu' => date('H:i:s'),
-                'keterangan' => 'Success reject create/modify : ' . $data['nm_gdc']
+                'keterangan' => 'Success reject create/modify : ' . $data['nama']
             );
             $this->m_log->insert($log);
         }
-        return redirect()->to('user');
-    }
-
-    function edit($id = NULL)
-    {
-        $data['user_role'] = $this->m_user_role->findAll();
-        $data['item'] = $this->m_user->find($id);
-        return view('user/edit', $data);
-    }
-
-    function hapus($id = NULL)
-    {
-        if (!$id) show_404();
-        $data = $this->m_user->find(decode($id));
-        if (empty($data)) {
-            show_404();
-        }
-        $nm = $data['nama'];
-        $datad['id_user'] = $data['id_user'];
-        $datad['username'] = $data['username'];
-        $datad['password'] = $data['password'];
-        $datad['nama'] = $data['nama'];
-        $datad['id_user_role'] = $data['id_user_role'];
-        $datad['email'] = $data['email'];
-        $datad['status'] = $data['status'];
-        $datad['pwd_created'] = $data['pwd_created'];
-        $datad['pwd_exp'] = $data['pwd_exp'];
-        $wkt = date('Y-m-d H:i:s');
-        $datad['created_at'] = $wkt;
-        $datad['created_by'] = session()->get('user_login_vgdc')['nama'];
-        $datad['is_approved'] = 'N';
-        $datad['approval_tipe'] = '3';
-        $datad['is_done'] = 'N';
-
-        $proses2 = $this->m_user_temp->insert(@$datad);
-        $log = array('id_user' => session()->get('user_login_vgdc')['id_user'], 'aktivitas' => '9', 'tanggal' => date('Y-m-d'), 'waktu' => date('H:i:s'), 'keterangan' => 'Success delete user : ' . $nm);
-        $this->m_log->insert($log);
-
-        if ($proses2) {
-            $this->session->setFlashdata('msg', succ_msg('Data User Akan Dihapus Setelah Disetujui oleh Admin.'));
-        } else {
-            $this->session->setFlashdata('msg', err_msg('Gagal menghapus.'));
-        }
-
         return redirect()->to('user');
     }
 }

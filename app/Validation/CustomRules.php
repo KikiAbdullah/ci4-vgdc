@@ -2,6 +2,8 @@
 
 namespace App\Validation;
 
+use App\Models\UserRole;
+
 class CustomRules
 {
 
@@ -58,6 +60,34 @@ class CustomRules
         }
 
         return TRUE;
+    }
+
+    function is_exist($str, $value = '')
+    {
+        $this->m_user_role = new UserRole();
+
+        $value = explode(',', $value);
+        $id = $value[0];
+        $nama = $value[1];
+
+        // $db->where($nama, $str);
+        // if ($id > 0)
+        //     $db->notLike('id_user_role', $id);
+
+        // $db_data = $db->get('user_role')->result();
+
+        $db_data = $this->m_user_role->where($nama, $str)
+            ->notLike('id_user_role', $id)
+            ->findAll();
+
+        if (!empty($db_data)) {
+            $this->form_validation->set_message(
+                'is_exist',
+                '%s "' . strtoupper($str) . '" sudah terdaftar.'
+            );
+            return false;
+        }
+        return true;
     }
     // END USER RULES
 }

@@ -4,10 +4,12 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class UserTemp extends Model
+use function PHPSTORM_META\map;
+
+class UserRoleTemp extends Model
 {
     protected $DBGroup              = 'default';
-    protected $table                = 'user_temp';
+    protected $table                = 'user_role_temp';
     protected $primaryKey           = 'id_temp';
     protected $useAutoIncrement     = true;
     protected $insertID             = 0;
@@ -15,17 +17,10 @@ class UserTemp extends Model
     protected $useSoftDeletes       = false;
     protected $protectFields        = true;
     protected $allowedFields        = [
-        'id_user',
-        'username',
-        'password',
-        'nama',
-        'no_telp',
         'id_user_role',
-        'email',
-        'status',
-        'jml_login',
-        'pwd_created',
-        'pwd_exp',
+        'user_role',
+        'menu_akses',
+        'jenis',
         'created_at',
         'created_by',
         'approved_at',

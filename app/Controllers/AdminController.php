@@ -20,6 +20,7 @@ use App\Models\Transaksi;
 use App\Models\Upd;
 use App\Models\User;
 use App\Models\UserRole;
+use App\Models\UserRoleTemp;
 use App\Models\UserTemp;
 
 class AdminController extends BaseController
@@ -46,6 +47,8 @@ class AdminController extends BaseController
         $this->m_upd = new Upd();
         $this->m_user = new User();
         $this->m_user_role = new UserRole();
+        $this->m_user_role_temp = new UserRoleTemp();
+
         $this->m_user_temp = new UserTemp();
 
 
