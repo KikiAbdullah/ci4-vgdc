@@ -175,8 +175,28 @@
 
 <?= $this->section('js') ?>
 <script type="text/javascript">
-    // console.log(<?= $akses[1] ?>);
     $(document).ready(function() {
+
+        function reloadbutton() {
+            $('.tombolEdit').each(function() {
+                var id = $(this).data('id');
+                // alert(id);
+                encodedString = btoa(id).replace('==', '').replace('=', '');
+                // alert(encodedString);
+                var link = $(this).attr('href');
+                $(this).attr('href', link + '/' + encodedString);
+            });
+
+
+            $('.tombolHapus').each(function() {
+                var id = $(this).data('id');
+                //alert(id);
+                encodedString = btoa(id).replace('==', '').replace('=', '');
+                var link = "<?= site_url('kios/hapus'); ?>";
+                $(this).attr('onclick', "hapus('" + link + '/' + encodedString + "');");
+            });
+        }
+
         var oTable = $('#tabel').dataTable({
             processing: true,
             serverSide: true,
@@ -208,22 +228,23 @@
                     data: "status",
                     render: function(data, type, row) {
                         if (data == 'Y') {
-                            var sts = '<label class="btn btn-md btn-primary" style="width: 100%;">ACTIVE</label>';
+                            var sts = '<label class="text-center" style="width: 100%; color:blue; font-weight:800;">ACTIVE</label>';
                         } else {
-                            var sts = '<label class="btn btn-md btn-danger" style="width: 100%;">NOT ACTIVE</label>';
+                            var sts = '<label class="text-center" style="width: 100%; color:red; font-weight:800;">NOT ACTIVE</label>';
                         }
                         return sts;
                     }
                 },
                 {
                     render: function(data, type, row) {
+                        var html = '';
                         if ('<?= $akses[2] ?>' != '') {
-                            var html = "<a class='tombolEdit' title='Edit' href=" + '<?= site_url('user/edit/') ?>' + " data-id='" + row['id_gdc'] +
+                            var html = "<a class='tombolEdit' title='Edit' href=" + '<?= site_url('kios/edit') ?>' + " data-id='" + row['id_gdc'] +
                                 "'><img src=" + '<?= base_url('assets/edit.png') ?>' + " style='width: 30px;'></a>&nbsp;";
                         }
 
                         if ('<?= $akses[3] ?>' != '') {
-                            var html = "<a class='tombolHapus' title='Hapus' href='#' data-id='" + row['id_gdc'] +
+                            var html = html + "<a class='tombolHapus' title='Hapus' href='#' data-id='" + row['id_gdc'] +
                                 "'><img src=" + '<?= base_url('assets/delete.png') ?>' + " style='width: 30px;'></a>";
                         }
                         return html;
@@ -236,7 +257,7 @@
         });
 
         $('#tabel').on('draw.dt', function() {
-            // reloadbutton();
+            reloadbutton();
             $('.make-switch').bootstrapSwitch();
         });
 

@@ -83,4 +83,39 @@ class Validation
 	public $store_user_role = [
 		'user_role' => 'trim|required|is_exist[{id},user_role]'
 	];
+
+	public $transaction = [
+		'trx_file'         => 'uploaded[trx_file]|ext_in[trx_file,xls,xlsx]|max_size[trx_file,1000]',
+	];
+
+	public $transaction_errors = [
+		'trx_file' => [
+			'ext_in'    => 'File Excel hanya boleh diisi dengan xls atau xlsx.',
+			'max_size'  => 'File Excel product maksimal 1mb',
+			'uploaded'  => 'File Excel product wajib diisi'
+		]
+	];
+
+	public $store_kios = [
+		'nm_gdc' => 'trim|required|valid_data',
+		'email_gdc' => 'trim|required',
+		'lokasi' => 'trim|required|valid_data',
+		//'status' =>'trim|required|valid_data',
+		'ip_gdc' => 'trim|required|valid_data',
+		'ipserver' => 'trim|required|valid_data',
+		'apikey' => 'trim|required',
+		'id_device' => 'trim|required',
+		'password' => 'trim|required|min_length[8]|max_length[14]|valid_password',
+		'confirm_password' => 'required|matches[password]',
+	];
+
+	public $update_kios = [
+		'nm_gdc' => 'trim|required|valid_data',
+		'email_gdc' => 'trim|required',
+		'lokasi' => 'trim|required|valid_data',
+		'ip_gdc' => 'trim|required|valid_data',
+		'ipserver' => 'trim|required|valid_data',
+		'apikey' => 'trim|required',
+		'id_device' => 'trim|required'
+	];
 }

@@ -59,8 +59,8 @@
                                 <div class="form-group col-md-8">
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <?php if (!empty($this->akses[4])) { ?>
-                                        <a class="btn blue" style="width : 100%;" href="<?= site_url('csat/export_excel_csat') ?>"><i class="fa fa-file-excel-o"></i> Export</a>
+                                    <?php if (!empty($akses[4])) { ?>
+                                        <a class="btn blue" style="width : 100%;" href="<?= site_url('csat/export') ?>"><i class="fa fa-file-excel-o"></i> Export</a>
                                     <?php } ?>
                                 </div>
                                 <br /><br /><br /><br />

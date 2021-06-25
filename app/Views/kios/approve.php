@@ -108,7 +108,9 @@
                     data: "nama"
                 },
                 {
-                    data: "detail"
+                    render: function(data, type, row) {
+                        return '<input class="id_temp" type="hidden" name="id_temp" value="' + row['id_temp'] + '"/><button class="btn detail" style="background-color:#009a3c; color:azure; border-radius: 5px;"> Approvement </button>'
+                    }
                 }
             ],
             language: {
