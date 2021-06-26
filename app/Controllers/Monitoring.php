@@ -13,8 +13,14 @@ class Monitoring extends AdminController
 
     public function index()
     {
+        $data['title'] = $this->title;
+
         // lakukan validasi
+        $validation =  \Config\Services::validation();
+        $isDataValid = $validation->withRequest($this->request)->run();
+
         $filter = $this->request->getPost();
+        // print_r($filter); exit;
         $this->session->set('filter', $filter);
         $data['filter'] = $this->session->get('filter');
 
@@ -27,22 +33,24 @@ class Monitoring extends AdminController
     {
         $filter = $this->session->get('filter');
 
-        $where = array();
-        if (!empty($filter['tanggal_awal']) && !empty($filter['tanggal_akhir'])) {
-            $where[] = array(
-                'date(log_gdc.tanggal) >=' => date('Y-m-d', strtotime($filter['tanggal_awal'])),
-                'date(log_gdc.tanggal) <=' => date('Y-m-d', strtotime($filter['tanggal_akhir']))
-            );
-        }
-
-        return DataTables::use('log_gdc')->select('log_gdc.tanggal as tanggal,log_gdc.waktu as waktu,gdc.nm_gdc as nm_gdc, aktivitas_status.deskripsi as deskripsi, keterangan')
+        $dt_builder =  DataTables::use('log_gdc')->select('log_gdc.tanggal as tanggal,log_gdc.waktu as waktu,gdc.nm_gdc as nm_gdc, aktivitas_status.deskripsi as deskripsi, keterangan')
             ->join('gdc', 'gdc.id_gdc = log_gdc.id_gdcl', 'left')
             ->join('aktivitas_status', 'aktivitas_status.id_aktivitas = log_gdc.aktivitas', 'left')
             ->orderBy('tanggal', 'desc')
-            ->orderBy('waktu', 'desc')
-            ->where(@$where)
-            ->make(true);
+            ->orderBy('waktu', 'desc');
+
+        if (!empty($filter['tanggal_awal']) && !empty($filter['tanggal_akhir'])) {
+            $dt_builder = $dt_builder->where(
+                array(
+                    'date(tanggal) >=' => date('Y-m-d', strtotime($filter['tanggal_awal'])),
+                    'date(tanggal) <=' => date('Y-m-d', strtotime($filter['tanggal_akhir']))
+                )
+            );
+        }
+
+        return $dt_builder->make(true);
     }
+
 
     public function reset_filter()
     {

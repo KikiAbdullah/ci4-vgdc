@@ -22,7 +22,7 @@
                         </div>
                     </div>
                     <div class="portlet-body form">
-                        <form role="form" action="<?= site_url('handling/index') ?>" method="post">
+                        <form role="form" action="<?= site_url('handling') ?>" method="post">
                             <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>">
                             <div class="form-body">
                                 <div class="form-group col-md-4">

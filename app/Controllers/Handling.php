@@ -13,6 +13,8 @@ class Handling extends AdminController
 
     public function index()
     {
+        $data['title'] = $this->title;
+
         // lakukan validasi
         $validation =  \Config\Services::validation();
         $isDataValid = $validation->withRequest($this->request)->run();

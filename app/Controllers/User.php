@@ -14,6 +14,8 @@ class User extends AdminController
 
     public function index()
     {
+        $data['title'] = $this->title;
+
         $data['akses']  = $this->akses;
         $data['user_role'] = $this->m_user_role->findAll();
         return view('user/index', $data);

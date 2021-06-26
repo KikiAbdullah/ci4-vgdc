@@ -11,7 +11,7 @@
                 <div class="portlet light" style="background-color: #f0f0f0;border-radius: 10px!important;color: black;border-bottom: 4px solid #00B14F;border-left: 4px solid #00B14F;border-right: 4px solid #00B14F;border: 4px solid #00B14F;">
                     <!-- <div class="portlet-title">
                     <div class="caption">
-                        Form Tambah <?= ucwords(@$this->title) ?>
+                        Form Tambah <?= ucwords(@$title) ?>
                     </div>
                 </div> -->
                     <div class="portlet-body form">

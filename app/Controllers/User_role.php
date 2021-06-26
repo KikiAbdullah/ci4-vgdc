@@ -14,6 +14,8 @@ class User_role extends AdminController
 
     public function index()
     {
+        $data['title'] = $this->title;
+
         $data['menu_list'] =  $this->m_menu->where('jenis', 1)->orderBy('tipe', 'asc')->findAll();
         $data['akses']  = $this->akses;
 

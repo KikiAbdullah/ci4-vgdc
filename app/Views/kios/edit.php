@@ -6,7 +6,7 @@
 		<div class="portlet light">
 			<div class="portlet-title">
 				<div class="caption">
-					Form Edit <?= ucwords(@$this->title) ?>
+					Form Edit <?= ucwords(@$title) ?>
 				</div>
 			</div>
 			<div class="portlet-body form">

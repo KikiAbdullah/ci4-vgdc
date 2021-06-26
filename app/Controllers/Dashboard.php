@@ -23,7 +23,9 @@ class Dashboard extends AdminController
 
     public function index()
     {
-        return view('dashboard/index');
+        $data['title'] = $this->title;
+
+        return view('dashboard/index', $data);
     }
 
     public function video_call()

@@ -15,6 +15,8 @@ class Kios extends AdminController
 
     public function index()
     {
+        $data['title'] = $this->title;
+
         $data['user_role'] = $this->m_user_role->findAll();
         $data['akses'] = $this->akses;
 

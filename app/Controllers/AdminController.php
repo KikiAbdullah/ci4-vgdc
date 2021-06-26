@@ -56,8 +56,9 @@ class AdminController extends BaseController
 
         $link = explode('/', uri_string(true));
 
-        @$id_menu = $this->m_menu->where('link', $link[0])->first()['id_menu'];
+        @$menu = $this->m_menu->where('link', $link[0])->first();
 
-        @$this->akses = $this->user['hak_akses'][$id_menu];
+        @$this->akses = $this->user['hak_akses'][$menu['id_menu']];
+        @$this->title = $menu['nama'];
     }
 }

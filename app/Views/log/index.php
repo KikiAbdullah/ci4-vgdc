@@ -22,7 +22,7 @@
                         </div>
                     </div>
                     <div class="portlet-body form">
-                        <form role="form" action="<?= site_url('log/index') ?>" method="post">
+                        <form role="form" action="<?= site_url('log') ?>" method="post">
                             <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>">
                             <div class="form-body">
                                 <div class="form-group col-md-8">
@@ -42,9 +42,6 @@
                                     <label style="color: white;">-</label>
                                     <button type="submit" class="btn blue" style="border :0;background-color : #007024; width : 100%;"><i class="fa fa-search"></i> Cari</button>
                                 </div>
-                                <!-- <?php if (!empty($this->akses[4])) { ?>
-                                        <a class="btn blue" style="width : 100%;"href="<?= site_url('log/export_excel_csat') ?>"><i class="fa fa-file-excel-o"></i> Export</a>
-                                    <?php } ?> -->
                             </div>
                             <br /><br /><br />
                     </div>

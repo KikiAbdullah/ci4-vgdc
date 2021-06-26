@@ -14,6 +14,7 @@ class Log extends AdminController
 
     public function index()
     {
+        $data['title'] = $this->title;
         // lakukan validasi
         $validation =  \Config\Services::validation();
         $isDataValid = $validation->withRequest($this->request)->run();
@@ -32,21 +33,21 @@ class Log extends AdminController
     {
         $filter = $this->session->get('filter');
 
+        $dt_builder = DataTables::use('log')->select('id_log, log.tanggal as tanggal, log.waktu as waktu, aktivitas, aktivitas_status.deskripsi as deskripsi, keterangan, user.nama as nama')
+            ->join('user', 'user.id_user = log.id_user', 'left')
+            ->join('aktivitas_status', 'aktivitas_status.id_aktivitas = log.aktivitas', 'left')
+            ->orderBy('id_log', 'desc');
 
-        $where = array();
         if (!empty($filter['tanggal_awal']) && !empty($filter['tanggal_akhir'])) {
-            $where[] = array(
-                'date(log.tanggal) >=' => date('Y-m-d', strtotime($filter['tanggal_awal'])),
-                'date(log.tanggal) <=' => date('Y-m-d', strtotime($filter['tanggal_akhir']))
+            $dt_builder = $dt_builder->where(
+                array(
+                    'date(log.tanggal) >=' => date('Y-m-d', strtotime($filter['tanggal_awal'])),
+                    'date(log.tanggal) <=' => date('Y-m-d', strtotime($filter['tanggal_akhir']))
+                )
             );
         }
 
-        return DataTables::use('log')->select('id_log, log.tanggal as tanggal, log.waktu as waktu, aktivitas, aktivitas_status.deskripsi as deskripsi, keterangan, user.nama as nama')
-            ->join('user', 'user.id_user = log.id_user', 'left')
-            ->join('aktivitas_status', 'aktivitas_status.id_aktivitas = log.aktivitas', 'left')
-            ->orderBy('id_log', 'desc')
-            ->where(@$where)
-            ->make(true);
+        return $dt_builder->make(true);
     }
 
     public function reset_filter()

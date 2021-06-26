@@ -121,11 +121,6 @@
         </div>
     </div>
 <?php } ?>
-
-
-<!-- <input id="myInput" class="filter" type="text"   placeholder="Search.." style="background-color: #e4e4e4;height: 30px;border: 2px #e4e4e4 solid;">
-<br><br> -->
-
 <div class="col-md-10" style="margin-top: 40px; margin-bottom:20px">
     <label class="title_name" style="color: #00B14F;">GDC KIOSK LIST</label><br>
 </div>
