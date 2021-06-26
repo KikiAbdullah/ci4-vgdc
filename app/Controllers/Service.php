@@ -25,7 +25,13 @@ class Service extends AdminController
 
 			$data1 = $this->m_jenis_driver->where('status', 'Y')->orderBy('id_jenis', 'asc')->findAll();
 
-			echo json_encode(array('tipe' => $data, 'jumlahtipe' => count($data), 'jenis' => $data1, 'jumlahjenis' => count($data1)));
+			$response = array(
+				'tipe' => $data,
+				'jumlahtipe' => count($data),
+				'jenis' => $data1, 'jumlahjenis' => count($data1)
+			);
+
+			echo json_encode($response, JSON_PRETTY_PRINT);
 		} else {
 			throw PageNotFoundException::forPageNotFound();
 		}
@@ -47,14 +53,14 @@ class Service extends AdminController
 
 				if (!empty($d)) {
 					// belum
-					$get_jenis = $this->jenis_driver->where('id_jenis', explode(',', $d))->findAll();
+					$get_jenis = $this->m_jenis_driver->whereIn('id_jenis', explode(',', $d))->findAll();
 
 					$data[$i]['jenis'] = @$get_jenis;
 					$data[$i]['jumlahjenis'] = @count($data[$i]['jenis']);
 				}
 			}
 
-			return json_encode(array('tipe' => $data, 'jumlahtipe' => count($data)));
+			return json_encode(array('tipe' => $data, 'jumlahtipe' => count($data)), JSON_PRETTY_PRINT);
 		} else {
 			throw PageNotFoundException::forPageNotFound();
 		}
@@ -66,17 +72,15 @@ class Service extends AdminController
 		$hayo = @$_REQUEST['hayo'];
 
 		if (decode($hayo) == hayo()) {
-			$where_jenis = [
-				'status' => 'Y',
-				'id_jenis' => $id_sub
-			];
-			$d = $this->jenis_driver->where($where_jenis)->first()['id_sub_jenis'];
+			$d = $this->m_jenis_driver->select('id_sub_jenis')
+				->where('status', 'Y')
+				->where('id_jenis', $id_sub)
+				->first()['id_sub_jenis'];
 
-			// belum
-			$get_sub = $this->m_sub_jenis->whereIn('id_sub_jenis', explode(',', $d))->findAll();
-			$data = @$get_sub;
+			//$data = [];
+			$data = @$this->m_sub_jenis->whereIn('id_sub_jenis', explode(',', $d))->findAll();
 
-			return json_encode(array('data' => $data, 'jumlah' => count($data)));
+			echo json_encode(array('data' => $data, 'jumlah' => count($data)), JSON_PRETTY_PRINT);
 		} else {
 			throw PageNotFoundException::forPageNotFound();
 		}
@@ -152,18 +156,19 @@ class Service extends AdminController
 		}
 	}
 
+
+	// BELUM FILESNYA
 	public function transaksi_ns()
 	{
 		$hayo = @$_REQUEST['hayo'];
 
 		if (decode($hayo) == hayo()) {
-			$no_antrian = $this->m_transaksi->where('tanggal', date('Y-m-d'))->select('max(no_antrian)', 'no_antrian')->first()['no_antrian'];
-
+			$no_antrian = $this->m_transaksi->where('tanggal', '2020-05-03')->select('max(no_antrian) as no_antrian')->first()['no_antrian'];
 
 			if ($no_antrian != '') {
 				$no_antrianbaru = intval($no_antrian) + 1;
 			} else {
-				$no_antrianbaru    = 1;
+				$no_antrianbaru = 1;
 			}
 
 			$nm_driver = @$_REQUEST['nm_driver'];
@@ -175,7 +180,7 @@ class Service extends AdminController
 			//$sessionid = @$_REQUEST['sessionid'];
 
 			$param = array(
-				'nm_driver' 		=> $nm_driver,
+				'nm_driver' 	=> $nm_driver,
 				'id_gdc'		=> $id_gdc,
 				'id_tipe'		=> $id_tipe,
 				'id_jenis'		=> $id_jenis,
@@ -327,12 +332,11 @@ class Service extends AdminController
 
 		$idtx = $data['id_trx'];
 		if (!empty($data)) {
-			// INI BELUM
-			// $param =  [
-			// 	'sts_trx' => 3,
-			// 	'wkt_selesai' => date('H:i:s')
-			// ];
-			// $update = $this->m_transaksi->update($idtx, $param);
+			$param =  [
+				'sts_trx' => 3,
+				'wkt_selesai' => date('H:i:s')
+			];
+			$update = $this->m_transaksi->update($idtx, $param);
 
 			echo json_encode(array('status' => 'sukses', 'message' => 'OK', 'data_id_trx' => $idtx));
 		} else {
@@ -661,7 +665,7 @@ class Service extends AdminController
 				'link' => $link,
 				'sessionid' => $sessionid
 			];
-			$this->m_transaki->update($id_trx, $param);
+			$this->m_transaksi->update($id_trx, $param);
 		} else {
 			throw PageNotFoundException::forPageNotFound();
 		}
@@ -824,8 +828,7 @@ class Service extends AdminController
 		$hayo = @$_REQUEST['hayo'];
 
 		if (decode($hayo) == hayo()) {
-			$this->m_transaksi->where('sessionid', $sessionid);
-			$this->m_transaksi->update(array('recordingid' => $recordid));
+			$this->m_transaksi->update(array('sessionid' => $sessionid), array('recordingid' => $recordid));
 		} else {
 			throw PageNotFoundException::forPageNotFound();
 		}

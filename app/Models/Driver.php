@@ -14,7 +14,12 @@ class Driver extends Model
 	protected $returnType           = 'array';
 	protected $useSoftDeletes       = false;
 	protected $protectFields        = true;
-	protected $allowedFields        = [];
+	protected $allowedFields        = [
+		'nm_drv',
+		'email_drv',
+		'pass_drv',
+		'status'
+	];
 
 	// Dates
 	protected $useTimestamps        = false;

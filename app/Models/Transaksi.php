@@ -15,7 +15,25 @@ class Transaksi extends Model
 	protected $returnType           = 'array';
 	protected $useSoftDeletes       = false;
 	protected $protectFields        = true;
-	protected $allowedFields        = [];
+	protected $allowedFields        = [
+		'no_antrian',
+		'tanggal',
+		'nm_driver',
+		'id_gdc',
+		'id_tipe',
+		'id_jenis',
+		'id_layanan',
+		'wkt_upload',
+		'wkt_mulai',
+		'wkt_selesai',
+		'id_cs',
+		'sts_trx',
+		'id_csat',
+		'link',
+		'sessionid',
+		'recordingid',
+		'tampil'
+	];
 
 	// Dates
 	protected $useTimestamps        = false;
