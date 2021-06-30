@@ -54,6 +54,11 @@ class AdminController extends BaseController
 
         $this->user = session()->get('user_login_vgdc');
 
+        
+
+
+
+
         $link = explode('/', uri_string(true));
 
         @$menu = $this->m_menu->where('link', $link[0])->first();
