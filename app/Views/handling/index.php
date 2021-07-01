@@ -166,46 +166,6 @@
 <script>
     var loading = false;
     $(function() {
-
-        $('body').on('click', '.end_session', function() {
-            //console.log($(this).closest('tr').find('.sts_trx').val());
-            if ($(this).closest('tr').find('.sts_trx').val() == 2) {
-
-                muncul($(this).closest('td').find('.id_trx').val());
-                // end_session($(this).closest('td').find('.id_trx').val());
-            } else {
-                alert('transaksi sudah selesai.');
-            }
-        })
-
-        $('body').on('click', '.view_document', function() {
-            //console.log($(this).closest('tr').find('.id_trx').val());
-            view_dokumen($(this).closest('tr').find('.id_trx').val());
-        })
-
-        function muncul(id_trx) {
-            var link = '<?= site_url('handling/updates_selesai') ?>';
-
-            $('.gae_popup').attr('href', link + '/' + id_trx + '/' + 'Y');
-            $('.tidak_tampil').attr('href', link + '/' + id_trx + '/' + 'N');
-
-            $('.finish').modal();
-        }
-
-        function end_session(id_trx) {
-
-            $.get('handling/updates_selesai', {
-                id_trx: id_trx
-            }, function(respon) {
-                var str = '';
-                if (respon.status == 'sukses') {
-                    $('#tabel').DataTable().ajax.reload();
-                } else {
-                    alert(respon.message);
-                }
-            }, 'json');
-        }
-
         var oTable = $('#tabel').dataTable({
             processing: true,
             serverSide: true,
@@ -302,7 +262,51 @@
                 "sProcessing": '<img src="<?= base_url("assets/loading2.gif"); ?>"><br><p style="margin-top:-5px;">Loading</p>'
             },
         });
+    })
+</script>
 
+<script>
+    var loading = false;
+    $(function() {
+
+        $('body').on('click', '.end_session', function() {
+            //console.log($(this).closest('tr').find('.sts_trx').val());
+            if ($(this).closest('tr').find('.sts_trx').val() == 2) {
+
+                muncul($(this).closest('td').find('.id_trx').val());
+                // end_session($(this).closest('td').find('.id_trx').val());
+            } else {
+                alert('transaksi sudah selesai.');
+            }
+        })
+
+        $('body').on('click', '.view_document', function() {
+            //console.log($(this).closest('tr').find('.id_trx').val());
+            view_dokumen($(this).closest('tr').find('.id_trx').val());
+        })
+
+        function muncul(id_trx) {
+            var link = '<?= site_url('handling/updates_selesai') ?>';
+
+            $('.gae_popup').attr('href', link + '/' + id_trx + '/' + 'Y');
+            $('.tidak_tampil').attr('href', link + '/' + id_trx + '/' + 'N');
+
+            $('.finish').modal();
+        }
+
+        function end_session(id_trx) {
+
+            $.get('handling' + '/updates_selesai', {
+                id_trx: id_trx
+            }, function(respon) {
+                var str = '';
+                if (respon.status == 'sukses') {
+                    $('#tabel').DataTable().ajax.reload();
+                } else {
+                    alert(respon.message);
+                }
+            }, 'json');
+        }
 
         $('.download_all').click(function() {
             var a = $(".ijen");
@@ -359,11 +363,7 @@
 
 
         function view_dokumen(id_trx) {
-            $.post('<?= site_url() ?>' + '/service/view_dokumen', {
-                id_trx: id_trx,
-                // hayo : '<?= encode(hayo()) ?>',
-                '<?= csrf_token() ?>': '<?= csrf_hash() ?>'
-            }, function(respon) {
+            $.get('<?= base_url() ?>' + '/service/view_dokumen/' + id_trx, {}, function(respon) {
                 var str = '';
                 count = 1;
                 if (respon.status == '200') {

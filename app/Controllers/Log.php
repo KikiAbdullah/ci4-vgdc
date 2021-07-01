@@ -14,6 +14,10 @@ class Log extends AdminController
 
     public function index()
     {
+        if (empty($this->user)) {
+            return redirect()->to('/login');
+        }
+        
         $data['title'] = $this->title;
         // lakukan validasi
         $validation =  \Config\Services::validation();

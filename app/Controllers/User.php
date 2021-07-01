@@ -14,6 +14,10 @@ class User extends AdminController
 
     public function index()
     {
+        if (empty($this->user)) {
+            return redirect()->to('/login');
+        }
+
         $data['title'] = $this->title;
 
         $data['akses']  = $this->akses;
@@ -23,6 +27,10 @@ class User extends AdminController
 
     function approve()
     {
+        if (empty($this->user)) {
+            return redirect()->to('/login');
+        }
+        
         $data['akses']  = $this->akses;
         $data['user_temp'] = $this->m_user_temp->findAll();
         return view('user/approve', @$data);

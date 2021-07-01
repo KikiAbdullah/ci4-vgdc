@@ -23,6 +23,9 @@ class Dashboard extends AdminController
 
     public function index()
     {
+        if (empty($this->user)) {
+            return redirect()->to('/login');
+        }
         $data['title'] = $this->title;
 
         return view('dashboard/index', $data);

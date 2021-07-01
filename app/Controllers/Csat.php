@@ -14,6 +14,10 @@ class Csat extends AdminController
 
     public function index()
     {
+        if (empty($this->user)) {
+            return redirect()->to('/login');
+        }
+
         $data['title'] = $this->title;
 
         // lakukan validasi
@@ -36,6 +40,9 @@ class Csat extends AdminController
 
     public function report_csat()
     {
+        if (empty($this->user)) {
+            return redirect()->to('/login');
+        }
         // lakukan validasi
         $validation =  \Config\Services::validation();
         $isDataValid = $validation->withRequest($this->request)->run();
@@ -66,6 +73,9 @@ class Csat extends AdminController
 
     public function export()
     {
+        if (empty($this->user)) {
+            return redirect()->to('/login');
+        }
         // ambil data transaction dari database
         $data = $this->get_data_export();
 

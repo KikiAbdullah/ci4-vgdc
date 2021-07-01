@@ -13,6 +13,10 @@ class Monitoring extends AdminController
 
     public function index()
     {
+        if (empty($this->user)) {
+            return redirect()->to('/login');
+        }
+        
         $data['title'] = $this->title;
 
         // lakukan validasi

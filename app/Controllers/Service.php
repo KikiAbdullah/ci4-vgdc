@@ -278,9 +278,9 @@ class Service extends AdminController
 	}
 
 	// view document
-	public function view_dokumen()
+	public function view_dokumen($id_trx)
 	{
-		$id_trx = @$_REQUEST['id_trx'];
+		// $id_trx = @$_REQUEST['id_trx'];
 
 		$data = @$this->m_file->where('id_trx', $id_trx)->first()['id_trx'];
 

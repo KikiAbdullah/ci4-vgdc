@@ -15,6 +15,10 @@ class Kios extends AdminController
 
     public function index()
     {
+        if (empty($this->user)) {
+            return redirect()->to('/login');
+        }
+
         $data['title'] = $this->title;
 
         $data['user_role'] = $this->m_user_role->findAll();
@@ -26,6 +30,10 @@ class Kios extends AdminController
 
     function approve()
     {
+        if (empty($this->user)) {
+            return redirect()->to('/login');
+        }
+
         $data['gdc_temp'] = $this->m_gdc_temp->findAll();
         $data['akses'] = $this->akses;
 
@@ -86,6 +94,11 @@ class Kios extends AdminController
 
     function edit($id = NULL)
     {
+
+        if (empty($this->user)) {
+            return redirect()->to('/login');
+        }
+
         if (!$id) show_404();
         $data['item'] = @$this->session->getFlashdata('postdata') ? @$this->session->getFlashdata('postdata') : $this->m_gdc->find(decode($id));
 
@@ -199,6 +212,10 @@ class Kios extends AdminController
 
     public function approved($id_temp = '', $apr = '')
     {
+        if (empty($this->user)) {
+            return redirect()->to('/login');
+        }
+
         $data = $this->m_gdc_temp->find($id_temp);
 
         //print_r($apr);exit;

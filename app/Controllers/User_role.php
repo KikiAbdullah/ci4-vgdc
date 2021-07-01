@@ -14,6 +14,10 @@ class User_role extends AdminController
 
     public function index()
     {
+        if (empty($this->user)) {
+            return redirect()->to('/login');
+        }
+
         $data['title'] = $this->title;
 
         $data['menu_list'] =  $this->m_menu->where('jenis', 1)->orderBy('tipe', 'asc')->findAll();
@@ -24,6 +28,9 @@ class User_role extends AdminController
 
     function edit($id = NULL)
     {
+        if (empty($this->user)) {
+            return redirect()->to('/login');
+        }
 
         if (!$id || empty($this->akses[2])) show_404();
 
@@ -84,6 +91,10 @@ class User_role extends AdminController
 
     function approve()
     {
+        if (empty($this->user)) {
+            return redirect()->to('/login');
+        }
+
         $data['user_role'] = $this->m_user_role->findAll();
 
         return view('user_role/approve', @$data);
