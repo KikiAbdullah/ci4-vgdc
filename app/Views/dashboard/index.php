@@ -184,7 +184,7 @@
             if (!loading) {
                 loading = true;
 
-                $.post('<?= site_url() ?>' + '/service/get_list_queue', {
+                $.post('<?= site_url() ?>' + 'service/get_list_queue', {
                     hayo: '<?= encode(hayo()) ?>',
                     '<?= csrf_token() ?>': '<?= csrf_hash() ?>'
                 }, function(respon) {
@@ -247,7 +247,7 @@
         }
 
         function get_statistik() {
-            $.post('<?= site_url() ?>' + '/service/get_statistik', {
+            $.post('<?= site_url() ?>' + 'service/get_statistik', {
                 hayo: '<?= encode(hayo()) ?>',
                 '<?= csrf_token() ?>': '<?= csrf_hash() ?>'
             }, function(respon) {

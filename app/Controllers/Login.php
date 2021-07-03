@@ -73,6 +73,8 @@ class Login extends BaseController
 
                 return redirect()->to('dashboard');
             } else {
+                $this->m_user->update($cek['id_user'], ['status' => 'N']);
+
                 $this->session->setFlashdata('msg', 'Password Anda Expired, Silahkan hubungi administrator.');
                 return redirect()->to('login');
             }
@@ -82,52 +84,58 @@ class Login extends BaseController
                 ->orWhere('user.password', md5($data['password']))
                 ->first();
 
-            $jum = $cek2['jml_login'] + 1;
-            $this->m_user->update($cek2['id_user'], array('jml_login' => $jum));
+            if (empty($cek2)) {
+                $this->session->setFlashdata('msg', 'Data yang anda masukkan salah.');
+            } else {
+                $jum = $cek2['jml_login'] + 1;
+                $this->m_user->update($cek2['id_user'], array('jml_login' => $jum));
 
-            if ($cek2['jml_login'] == 0) {
-                $log = array(
-                    'id_user' => $cek2['id_user'],
-                    'aktivitas' => '1',
-                    'tanggal' => date('Y-m-d'),
-                    'waktu' => date('H:i:s'),
-                    'keterangan' => 'User login failed'
-                );
-                $this->m_log->insert($log);
+                if ($cek2['jml_login'] == 0) {
+                    $log = array(
+                        'id_user' => $cek2['id_user'],
+                        'aktivitas' => '1',
+                        'tanggal' => date('Y-m-d'),
+                        'waktu' => date('H:i:s'),
+                        'keterangan' => 'User login failed'
+                    );
+                    $this->m_log->insert($log);
 
-                $this->session->setFlashdata('msg', 'Data yang anda masukkan salah. Jumlah login 1x');
+                    $this->session->setFlashdata('msg', 'Data yang anda masukkan salah. Jumlah login 1x');
+                }
+
+                if ($cek2['jml_login'] == 1) {
+                    $log = array(
+                        'id_user' => $cek2['id_user'],
+                        'aktivitas' => '1',
+                        'tanggal' => date('Y-m-d'),
+                        'waktu' => date('H:i:s'),
+                        'keterangan' => 'User login failed'
+                    );
+                    $this->m_log->insert($log);
+
+                    $this->session->setFlashdata('msg', 'Data yang anda masukkan salah. Jumlah login 2x');
+                }
+
+                if ($cek2['jml_login'] == 2) {
+                    $this->m_user->update($cek2['id_user'], ['status' => 'N']);
+
+                    $log = array(
+                        'id_user' => $cek2['id_user'],
+                        'aktivitas' => '4',
+                        'tanggal' => date('Y-m-d'),
+                        'waktu' => date('H:i:s'),
+                        'keterangan' => 'User login failed - 3 times'
+                    );
+                    $this->m_log->insert($log);
+
+                    $this->session->setFlashdata('msg', 'Anda sudah gagal login 3x. User anda sudah diblokir, Silahkan hubungi administrator.');
+                }
+                if ($cek2['jml_login'] > 2) {
+                    $this->session->setFlashdata('msg', 'User anda telah diblokir, Silahkan hubungi administrator.');
+                }
             }
 
-            if ($cek2['jml_login'] == 1) {
-                $log = array(
-                    'id_user' => $cek2['id_user'],
-                    'aktivitas' => '1',
-                    'tanggal' => date('Y-m-d'),
-                    'waktu' => date('H:i:s'),
-                    'keterangan' => 'User login failed'
-                );
-                $this->m_log->insert($log);
 
-                $this->session->setFlashdata('msg', 'Data yang anda masukkan salah. Jumlah login 2x');
-            }
-
-            if ($cek2['jml_login'] == 2) {
-                $this->m_user->update($cek2['id_user'], ['status' => 'N']);
-
-                $log = array(
-                    'id_user' => $cek2['id_user'],
-                    'aktivitas' => '4',
-                    'tanggal' => date('Y-m-d'),
-                    'waktu' => date('H:i:s'),
-                    'keterangan' => 'User login failed - 3 times'
-                );
-                $this->m_log->insert($log);
-
-                $this->session->setFlashdata('msg', 'Anda sudah gagal login 3x. User anda sudah diblokir, Silahkan hubungi administrator.');
-            }
-            if ($cek2['jml_login'] > 2) {
-                $this->session->setFlashdata('msg', 'User anda telah diblokir, Silahkan hubungi administrator.');
-            }
             return redirect()->to('login');
         }
     }

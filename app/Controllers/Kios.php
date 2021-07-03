@@ -43,7 +43,7 @@ class Kios extends AdminController
     function do_tambah()
     {
         $data = @$this->request->getPost();
-        // $data = $this->security->xss_clean($data);
+        $data = $this->security->xss_clean($data);
         if ($data) {
             if ($this->form_validation->run($data, 'store_kios') == FALSE) {
                 session()->setFlashdata('postdata', $this->request->getPost());
@@ -108,7 +108,7 @@ class Kios extends AdminController
     function do_ubah()
     {
         $data = @$this->request->getPost();
-        $data = $this->security->xss_clean($data);
+        // $data = $this->security->xss_clean($data);
         // print_r($data);exit;
         if ($data) {
             if ($this->form_validation->run($data, 'update_kios') == FALSE) {

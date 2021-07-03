@@ -269,7 +269,7 @@ class User_role extends AdminController
                 if ($proses2) {
                     $param_update =  ['created_at' => $data['created_at'], 'approved_at' => $datad['approved_at'], 'approved_by' => session()->get('user_login_vgdc')['id_user'], 'is_approved' => $apr, 'is_done' => 'Y'];
 
-                    $this->m_user_role->update($id_temp, @$param_update);
+                    $this->m_user_role_temp->update($id_temp, @$param_update);
 
                     $this->session->setFlashdata('msg', succ_msg('Perubahan Data User Role Telah Disetujui.'));
                     $log = array('id_user' => session()->get('user_login_vgdc')['id_user'], 'aktivitas' => '17', 'tanggal' => date('Y-m-d'), 'waktu' => date('H:i:s'), 'keterangan' => 'Success approve to modify : ' . $data['user_role']);
@@ -283,7 +283,7 @@ class User_role extends AdminController
 
                 $param_update = ['approved_at' => $wkt3, 'approved_by' => session()->get('user_login_vgdc')['id_user'], 'is_approved' => $apr, 'is_done' => 'Y'];
 
-                $this->m_user_role->update($id_temp, $param_update);
+                $this->m_user_role_temp->update($id_temp, $param_update);
 
                 $getid = $this->m_user_role_temp->find($id_temp)['id_user_role'];
                 $hapus = $this->m_user_role->delete($getid);

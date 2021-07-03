@@ -223,6 +223,7 @@ License: You must have a valid license purchased only from themeforest(the above
         }
 
         $(document).ready(function() {
+            console.log('idle');
             var idleTime = 0;
             $('.select2').select2();
             $('.select2.readonly').select2({
