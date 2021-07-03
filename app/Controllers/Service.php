@@ -464,6 +464,7 @@ class Service extends AdminController
 
 	public function transaksi()
 	{
+		dd($_FILES['file']);
 		$hayo = @$_REQUEST['hayo'];
 
 		if (decode($hayo) == hayo()) {
