@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-
+use App\Libraries\Crypter;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use Config\Services;
 use Hermawan\DataTables\DataTable;
@@ -288,14 +288,17 @@ class Service extends AdminController
 			$db_data = @$this->m_file->join('dokumen', 'file.id_dok = dokumen.id_dok', 'left')
 				->where('id_trx', $data)->findAll();
 
+
 			foreach ($db_data as $key => $value) {
-				$image = base_url('uploads/file') . '/' . $value['attach'];
+				// $image = base_url('uploads/file') . '/' . $value['attach'];
+				$image = Crypter::decryptFile($value['attach'], 'a');
+
 				$respone[] = array(
 					'name' => $value['nm_dok'],
 					'image' => $image
 				);
 			}
-
+			dd($respone);
 			echo stripslashes(json_encode(array('status' => '200', 'message' => 'OK', 'id_trx' => $value['id_trx'], 'data' => $respone), JSON_UNESCAPED_SLASHES));
 		} else {
 
@@ -464,7 +467,18 @@ class Service extends AdminController
 
 	public function transaksi()
 	{
-		dd($_FILES['file']);
+
+		// $decrypt = Crypter::decryptFile('uploads/crypt.sql', 'a');
+
+		// var_dump($decrypt);
+		// exit;
+
+
+
+
+
+
+
 		$hayo = @$_REQUEST['hayo'];
 
 		if (decode($hayo) == hayo()) {
@@ -497,48 +511,38 @@ class Service extends AdminController
 			];
 			$trx = $this->m_transaksi->insert($param);
 
-			$id_trx = $trx->getInsertId();
+			$id_trx = $trx;
 
 			// INI BELUM
+			// file sudah terupload tapi belum bisa diencrypt, kalo dari project sebelumnya encrypt di comment
 
-			// if (!empty(@$_FILES['file']['name'])) {
+			if (!empty($this->request->getFileMultiple('file'))) {
 
-			//     foreach ($_FILES['file']['name'] as $key => $value) {
-			//         $_FILES['file[]']['name'] = $_FILES['file']['name'][$key];
-			//         $_FILES['file[]']['type'] = $_FILES['file']['type'][$key];
-			//         $_FILES['file[]']['tmp_name'] = $_FILES['file']['tmp_name'][$key];
-			//         $_FILES['file[]']['error'] = $_FILES['file']['error'][$key];
-			//         $_FILES['file[]']['size'] = $_FILES['file']['size'][$key];
+				foreach ($this->request->getFileMultiple('file') as $key => $value) {
 
-			//         $file_name = $_FILES['file']['name'][$key];
-			//         if (!empty($file_name)) {
+					// $file_uploaded = $this->request->getFileMultiple('file')[$key];
+					// $crypt = ;
 
-			//             $config['upload_path'] = 'uploads/file';
-			//             $config['allowed_types'] = '*';
+					$save = ROOTPATH . 'uploads/file/enc.jpg';
 
-			//             $new_name = $file_name;
-			//             $config['file_name'] = $new_name;
+					$crypt = Crypter::encryptFile($this->request->getFileMultiple('file')[$key]->getTempName(), 'jos', $save);
 
-			//             $this->load->library('upload', $config);
-			//             $this->upload->initialize($config);
 
-			//             if (!$this->upload->do_upload('file[]')) {
+					// $file_name = $file_uploaded->getName();
+					if (!empty($save)) {
 
-			//                 return json_encode(array('status' => 'gagal', 'msg' => 'upload file gagal'));
-			//             } else {
-			//                 $dataFile  = $this->upload->data();
-			//                 $file_name = $dataFile['file_name'];
+						if (!$save) {
 
-			//                 // enkripsi
-			//                 //$this->encrypt_file("./uploads/file/".$file_name, "./uploads/file/".$file_name, 'jos');
+							return json_encode(array('status' => 'gagal', 'msg' => 'upload file gagal'));
+						} else {
 
-			//                 $this->db->insert('file', array('sessionid' => $sessionid, 'id_trx' => $id_trx, 'id_dok' => $id_dok[$key], 'attach' => $file_name));
-			//             }
-			//         } else {
-			//             return json_encode(array('status' => 'gagal', 'msg' => 'File tidak ditemukan '));
-			//         }
-			//     }
-			// }
+							$this->m_file->insert(array('sessionid' => $sessionid, 'id_trx' => $id_trx, 'id_dok' => $id_dok[$key], 'attach' => $save));
+						}
+					} else {
+						return json_encode(array('status' => 'gagal', 'msg' => 'File tidak ditemukan '));
+					}
+				}
+			}
 
 			$data = $this->m_transaksi->where('tanggal', date('Y-m-d'))
 				->orderBy('id_trx', 'desc')->first();

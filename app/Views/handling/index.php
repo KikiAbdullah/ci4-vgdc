@@ -242,6 +242,8 @@
                     render: function(data, type, row) {
                         if ('<?= $akses[2] ?>' != '') {
                             html = '<input class="id_trx" type="hidden" name="id_trx" value="' + row['id_trx'] + '"/><button class="view_document"  style="border : 0!important; background-color : transparent!important;" type="submit"><img src=' + "<?= base_url('assets/icon_mekar.png') ?>" + ' style="width: 30px;"></button></form>';
+                            // html = row['id_trx'];
+
                         }
                         return html;
                     }

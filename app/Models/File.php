@@ -14,7 +14,12 @@ class File extends Model
 	protected $returnType           = 'array';
 	protected $useSoftDeletes       = false;
 	protected $protectFields        = true;
-	protected $allowedFields        = [];
+	protected $allowedFields        = [
+		'id_trx',
+		'id_dok',
+		'attach',
+		'sessionid'
+	];
 
 	// Dates
 	protected $useTimestamps        = false;
