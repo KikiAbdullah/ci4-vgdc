@@ -834,7 +834,10 @@ class Service extends AdminController
 		$hayo = @$_REQUEST['hayo'];
 
 		if (decode($hayo) == hayo()) {
-			$this->m_transaksi->update(array('sessionid' => $sessionid), array('recordingid' => $recordid));
+
+			$id = $this->m_transaksi->where('sessionid', $sessionid)->first()['id_trx'];
+
+			$update = $this->m_transaksi->update($id, array('recordingid' => $recordid));
 		} else {
 			throw PageNotFoundException::forPageNotFound();
 		}
@@ -857,7 +860,7 @@ class Service extends AdminController
 
 			if (!empty($data)) {
 
-				$id_cs = @$this->session->get('user')['id_cs'];
+				$id_cs = @$this->session->get('user');
 
 				$param = [
 					"sts_trx" => 2,
@@ -868,7 +871,7 @@ class Service extends AdminController
 				$result = $this->m_transaksi->update($data['id_trx'], $param);
 
 				if ($result) {
-					echo json_encode(array('status' => 'sukses', 'data' => $data['id_trx']));
+					echo json_encode(array('status' => 'sukses', 'data' => $data));
 				} else {
 					echo json_encode(array('status' => 'gagal', 'msg' =>  'saat akan melakukan panggilan video '));
 				}
@@ -976,22 +979,23 @@ class Service extends AdminController
 		$hayo = @$_REQUEST['hayo'];
 
 		if (decode($hayo) == hayo()) {
-
 			$sts = 1;
+
 			$data = $this->m_transaksi->where('id_trx', $id_trx)
 				->where('tanggal', date('Y-m-d'))
-				->where('sts_trx', $sts)->first()['id_trx'];
+				->where('sts_trx', $sts)
+				->first();
 
-			return json_encode(array('status' => 'sukses', 'data' => $data));
 
+			// UPDATENYA MASIH ERROR
 			if (!empty($data)) {
 				$param = [
 					'sts_trx' => 4,
 					'wkt_selesai' => date('H:i:s')
 				];
 
-				$update = $this->m_transaksi->update($data, $param);
-			} else {
+				$update = $this->m_transaksi->update($data['id_trx'], $param);
+				return json_encode(array('status' => 'sukses', 'data' => $data));
 			}
 		} else {
 			throw PageNotFoundException::forPageNotFound();
@@ -1026,12 +1030,12 @@ class Service extends AdminController
 	// INI BELUM
 	// public function konversi_pdf($nama_file, $file_ext)
 	// {
-	//     $pdf = new FPDF('p', 'mm', 'A4');
-	//     $pdf->AddPage();
-	//     $pdf->Image(base_url('uploads/file/' . $nama_file));
-	//     $pdf->Output(base_url('uploads/file/a'));
-	//     // $pdf->Output('F',str_replace('\\', '/', FCPATH . str_replace('./', '', './uploads/file/')). substr($nama_file,0, strpos($nama_file, $file_ext)).'.pdf');
-	//     return true;
+	// 	$pdf = new FPDF('p', 'mm', 'A4');
+	// 	$pdf->AddPage();
+	// 	$pdf->Image(base_url('uploads/file/' . $nama_file));
+	// 	$pdf->Output(base_url('uploads/file/a'));
+	// 	// $pdf->Output('F',str_replace('\\', '/', FCPATH . str_replace('./', '', './uploads/file/')). substr($nama_file,0, strpos($nama_file, $file_ext)).'.pdf');
+	// 	return true;
 	// }
 
 
@@ -1276,38 +1280,25 @@ class Service extends AdminController
 
 			$data = $this->m_upd->orderBy('id_update', 'desc')->first();
 
-			if (!empty(@$_FILES['file']['name'])) {
+			if (!empty($this->request->getFileMultiple('file'))) {
 
-				foreach ($_FILES['file']['name'] as $key => $value) {
-					$_FILES['file[]']['name'] = $_FILES['file']['name'][$key];
-					$_FILES['file[]']['type'] = $_FILES['file']['type'][$key];
-					$_FILES['file[]']['tmp_name'] = $_FILES['file']['tmp_name'][$key];
-					$_FILES['file[]']['error'] = $_FILES['file']['error'][$key];
-					$_FILES['file[]']['size'] = $_FILES['file']['size'][$key];
+				foreach ($this->request->getFileMultiple('file') as $key => $value) {
 
-					$file_name = $_FILES['file']['name'][$key];
-					if (!empty($file_name)) {
+					$file_uploaded = $this->request->getFileMultiple('file')[$key];
 
-						$config['upload_path'] = 'update/fileupdate';
-						$config['allowed_types'] = '*';
+					$file_name = $file_uploaded->getName();
+					if (!empty($save)) {
 
-						$new_name = $file_name;
-						$config['file_name'] = $new_name;
-
-						$this->load->library('upload', $config);
-						$this->upload->initialize($config);
-
-						if (!$this->upload->do_upload('file[]')) {
-
-							echo json_encode(array('status' => 'gagal', 'msg' => 'upload file gagal'));
+						if (!$file_uploaded->move(ROOTPATH . 'update/fileupdate')) {
+							return json_encode(array('status' => 'gagal', 'msg' => 'upload file gagal'));
 						} else {
 							$dataFile  = $this->upload->data();
 							$file_name = $dataFile['file_name'];
 							$full_path = $dataFile['full_path'];
-							//print_r($dataFile);							
+							//print_r($dataFile);	
 						}
 					} else {
-						echo json_encode(array('status' => 'gagal', 'msg' => 'File Not Found'));
+						return json_encode(array('status' => 'gagal', 'msg' => 'File tidak ditemukan '));
 					}
 				}
 			}
