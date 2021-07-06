@@ -14,7 +14,15 @@ class Menu extends Model
 	protected $returnType           = 'array';
 	protected $useSoftDeletes       = false;
 	protected $protectFields        = true;
-	protected $allowedFields        = [];
+	protected $allowedFields        = [
+		'nama',
+		'link',
+		'parent',
+		'icon',
+		'tipe',
+		'status',
+		'jenis',
+	];
 
 	// Dates
 	protected $useTimestamps        = false;

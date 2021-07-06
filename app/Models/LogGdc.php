@@ -14,7 +14,13 @@ class LogGdc extends Model
 	protected $returnType           = 'array';
 	protected $useSoftDeletes       = false;
 	protected $protectFields        = true;
-	protected $allowedFields        = [];
+	protected $allowedFields        = [
+		'tanggal',
+		'waktu',
+		'id_gdcl',
+		'aktivitas',
+		'keterangan',
+	];
 
 	// Dates
 	protected $useTimestamps        = false;

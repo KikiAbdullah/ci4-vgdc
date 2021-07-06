@@ -14,7 +14,12 @@ class DokUpload extends Model
 	protected $returnType           = 'array';
 	protected $useSoftDeletes       = false;
 	protected $protectFields        = true;
-	protected $allowedFields        = [];
+	protected $allowedFields        = [
+		'id_tipe',
+		'id_jenis',
+		'id_layanan',
+		'id_dok',
+	];
 
 	// Dates
 	protected $useTimestamps        = false;

@@ -14,7 +14,11 @@ class Dokumen extends Model
 	protected $returnType           = 'array';
 	protected $useSoftDeletes       = false;
 	protected $protectFields        = true;
-	protected $allowedFields        = [];
+	protected $allowedFields        = [
+		'nm_dok',
+		'id_tipe',
+		'status',
+	];
 
 	// Dates
 	protected $useTimestamps        = false;

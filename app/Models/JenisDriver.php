@@ -14,7 +14,11 @@ class JenisDriver extends Model
 	protected $returnType           = 'array';
 	protected $useSoftDeletes       = false;
 	protected $protectFields        = true;
-	protected $allowedFields        = [];
+	protected $allowedFields        = [
+		'nm_jenis',
+		'id_sub_jenis',
+		'status',
+	];
 
 	// Dates
 	protected $useTimestamps        = false;

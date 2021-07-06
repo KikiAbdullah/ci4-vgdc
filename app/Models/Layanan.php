@@ -4,6 +4,8 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
+use function PHPSTORM_META\map;
+
 class Layanan extends Model
 {
 	protected $DBGroup              = 'default';
@@ -14,7 +16,11 @@ class Layanan extends Model
 	protected $returnType           = 'array';
 	protected $useSoftDeletes       = false;
 	protected $protectFields        = true;
-	protected $allowedFields        = [];
+	protected $allowedFields        = [
+		'nm_layanan',
+		'id_dok',
+		'status',
+	];
 
 	// Dates
 	protected $useTimestamps        = false;
