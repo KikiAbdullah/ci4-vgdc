@@ -280,7 +280,9 @@ class Service extends AdminController
 	// view document
 	public function view_dokumen($id_trx)
 	{
-		// $id_trx = @$_REQUEST['id_trx'];
+		if (empty($id_trx)) {
+			$id_trx = @$_REQUEST['id_trx'];
+		}
 
 		$data = @$this->m_file->where('id_trx', $id_trx)->first()['id_trx'];
 
@@ -290,15 +292,14 @@ class Service extends AdminController
 
 
 			foreach ($db_data as $key => $value) {
-				// $image = base_url('uploads/file') . '/' . $value['attach'];
-				$image = Crypter::decryptFile($value['attach'], 'a');
+				$image = base_url('uploads/file') . '/' . $value['attach'];
+				// $image = Crypter::decryptFile($value['attach'], 'a');
 
 				$respone[] = array(
 					'name' => $value['nm_dok'],
 					'image' => $image
 				);
 			}
-			dd($respone);
 			echo stripslashes(json_encode(array('status' => '200', 'message' => 'OK', 'id_trx' => $value['id_trx'], 'data' => $respone), JSON_UNESCAPED_SLASHES));
 		} else {
 
