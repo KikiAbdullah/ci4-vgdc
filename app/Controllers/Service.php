@@ -468,18 +468,6 @@ class Service extends AdminController
 
 	public function transaksi()
 	{
-
-		// $decrypt = Crypter::decryptFile('uploads/crypt.sql', 'a');
-
-		// var_dump($decrypt);
-		// exit;
-
-
-
-
-
-
-
 		$hayo = @$_REQUEST['hayo'];
 
 		if (decode($hayo) == hayo()) {
@@ -514,26 +502,24 @@ class Service extends AdminController
 
 			$id_trx = $trx;
 
-			// INI BELUM
-			// file sudah terupload tapi belum bisa diencrypt, kalo dari project sebelumnya encrypt di comment
-
 			if (!empty($this->request->getFileMultiple('file'))) {
 
 				foreach ($this->request->getFileMultiple('file') as $key => $value) {
+					if (!empty($value)) {
+						$fileName = $value->getRandomName();
+						$save = $value->move(ROOTPATH . 'uploads/file/', $fileName);
 
-					// $file_uploaded = $this->request->getFileMultiple('file')[$key];
-					// $crypt = ;
+						$enc_name = ROOTPATH . 'uploads/file/' . $fileName;
+						$apikey = 'keykuy';
+						//$a = folder untuk menyimpan file yg sudah di decrypt
+						$a = ROOTPATH . 'uploads/file/dec/';
 
-					$save = ROOTPATH . 'uploads/file/enc.jpg';
+						encryptFile($enc_name, $apikey, $enc_name . '.enc');
+						// delete_files($enc_name);
+						decryptFile($enc_name . '.enc', $key, $a . $fileName);
 
-					$crypt = Crypter::encryptFile($this->request->getFileMultiple('file')[$key]->getTempName(), 'jos', $save);
-
-
-					// $file_name = $file_uploaded->getName();
-					if (!empty($save)) {
 
 						if (!$save) {
-
 							return json_encode(array('status' => 'gagal', 'msg' => 'upload file gagal'));
 						} else {
 
