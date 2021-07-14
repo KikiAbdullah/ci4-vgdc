@@ -381,8 +381,6 @@
                             '</div>';
                     })
 
-
-                    console.log(str);
                     $('.content').html(str);
                     $('.view_doc').modal();
                 }

@@ -290,10 +290,28 @@ class Service extends AdminController
 			$db_data = @$this->m_file->join('dokumen', 'file.id_dok = dokumen.id_dok', 'left')
 				->where('id_trx', $data)->findAll();
 
-
 			foreach ($db_data as $key => $value) {
-				$image = base_url('uploads/file') . '/' . $value['attach'];
-				// $image = Crypter::decryptFile($value['attach'], 'a');
+
+
+				$fileName = $value['attach'];
+
+				$enc_file = ROOTPATH . 'uploads/file/' . $fileName;
+				$apikey = 'keykuy';
+				//$a = folder untuk menyimpan file yg sudah di decrypt
+				$a = ROOTPATH . 'public/uploads/file/dec/';
+
+				// encryptFile($enc_file, $apikey, $enc_file . '.enc');
+				// unlink($enc_file);
+
+				//DECRYPT
+				decryptFile($enc_file . '.enc', $apikey, $a . $fileName);
+
+				$path = ROOTPATH . 'public/uploads/file/dec/' . $fileName;
+				$type = pathinfo($path, PATHINFO_EXTENSION);
+				$data = file_get_contents($path);
+				$image = 'data:image/' . $type . ';base64,' . base64_encode($data);
+
+				unlink($path);
 
 				$respone[] = array(
 					'name' => $value['nm_dok'],
@@ -509,21 +527,19 @@ class Service extends AdminController
 						$fileName = $value->getRandomName();
 						$save = $value->move(ROOTPATH . 'uploads/file/', $fileName);
 
-						$enc_name = ROOTPATH . 'uploads/file/' . $fileName;
+						$enc_file = ROOTPATH . 'uploads/file/' . $fileName;
 						$apikey = 'keykuy';
 						//$a = folder untuk menyimpan file yg sudah di decrypt
 						$a = ROOTPATH . 'uploads/file/dec/';
 
-						encryptFile($enc_name, $apikey, $enc_name . '.enc');
-						// delete_files($enc_name);
-						decryptFile($enc_name . '.enc', $key, $a . $fileName);
+						encryptFile($enc_file, $apikey, $enc_file . '.enc');
+						unlink($enc_file);
 
 
 						if (!$save) {
 							return json_encode(array('status' => 'gagal', 'msg' => 'upload file gagal'));
 						} else {
-
-							$this->m_file->insert(array('sessionid' => $sessionid, 'id_trx' => $id_trx, 'id_dok' => $id_dok[$key], 'attach' => $save));
+							$this->m_file->insert(array('sessionid' => $sessionid, 'id_trx' => $id_trx, 'id_dok' => $id_dok[$key], 'attach' => $fileName));
 						}
 					} else {
 						return json_encode(array('status' => 'gagal', 'msg' => 'File tidak ditemukan '));
