@@ -81,7 +81,7 @@ class Validation
 	];
 
 	public $store_user_role = [
-		'user_role' => 'trim|required|is_exist[{id},user_role]'
+		'user_role' => 'trim|required'
 	];
 
 	public $transaction = [

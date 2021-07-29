@@ -233,12 +233,12 @@
                 {
                     render: function(data, type, row) {
                         var html = '';
-                        if ('<?= $akses[2] ?>' != '') {
+                        if ('<?= $akses[2] ?>' != '0') {
                             var html = "<a class='tombolEdit' title='Edit' href=" + '<?= site_url('kios/edit') ?>' + " data-id='" + row['id_gdc'] +
                                 "'><img src=" + '<?= base_url('assets/edit.png') ?>' + " style='width: 30px;'></a>&nbsp;";
                         }
 
-                        if ('<?= $akses[3] ?>' != '') {
+                        if ('<?= $akses[3] ?>' != '0') {
                             var html = html + "<a class='tombolHapus' title='Hapus' href='#' data-id='" + row['id_gdc'] +
                                 "'><img src=" + '<?= base_url('assets/delete.png') ?>' + " style='width: 30px;'></a>";
                         }

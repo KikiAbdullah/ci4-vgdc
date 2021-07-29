@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use CodeIgniter\Exceptions\PageNotFoundException;
 use Irsyadulibad\DataTables\DataTables;
 
 class Kios extends AdminController
@@ -43,11 +44,14 @@ class Kios extends AdminController
     function do_tambah()
     {
         $data = @$this->request->getPost();
-        $data = $this->security->xss_clean($data);
+        // $data = $this->security->xss_clean($data);
         if ($data) {
             if ($this->form_validation->run($data, 'store_kios') == FALSE) {
                 session()->setFlashdata('postdata', $this->request->getPost());
-                dd($this->form_validation->getErrors());
+                $error = $this->form_validation->getErrors();
+                foreach ($error as $error_msg) {
+                    $this->session->setFlashdata('msg', warn_msg($error_msg));
+                }
                 return redirect()->to('kios');
             } else {
                 $cek = $this->m_gdc->where('nm_gdc', $data['nm_gdc'])->first();
@@ -88,7 +92,7 @@ class Kios extends AdminController
                 return redirect()->to('kios');
             }
         } else {
-            show_404();
+            throw PageNotFoundException::forPageNotFound();
         }
     }
 
@@ -99,7 +103,7 @@ class Kios extends AdminController
             return redirect()->to('/login');
         }
 
-        if (!$id) show_404();
+        if (!$id) throw PageNotFoundException::forPageNotFound();
         $data['item'] = @$this->session->getFlashdata('postdata') ? @$this->session->getFlashdata('postdata') : $this->m_gdc->find(decode($id));
 
         return view('kios/edit', $data);
@@ -166,16 +170,16 @@ class Kios extends AdminController
                 return redirect()->to('kios');
             }
         } else {
-            show_404();
+            throw PageNotFoundException::forPageNotFound();
         }
     }
 
     function hapus($id = NULL)
     {
-        if (!$id) show_404();
+        if (!$id) throw PageNotFoundException::forPageNotFound();
         $data = $this->m_gdc->find(decode($id));
         if (empty($data)) {
-            show_404();
+            throw PageNotFoundException::forPageNotFound();
         }
 
         $nm = $data['nm_gdc'];

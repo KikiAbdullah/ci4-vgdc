@@ -6,7 +6,6 @@ use App\Models\UserRole;
 
 class CustomRules
 {
-
     // USER RULES
     public function valid_data($data = '', string &$error = null)
     {
@@ -62,7 +61,7 @@ class CustomRules
         return TRUE;
     }
 
-    function is_exist($str, $value = '')
+    public function is_exist($str, $value = '')
     {
         $this->m_user_role = new UserRole();
 

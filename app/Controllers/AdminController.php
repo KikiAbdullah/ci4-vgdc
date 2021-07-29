@@ -54,7 +54,7 @@ class AdminController extends BaseController
 
         $this->user = session()->get('user_login_vgdc');
 
-        
+
 
 
 

@@ -223,7 +223,6 @@ License: You must have a valid license purchased only from themeforest(the above
         }
 
         $(document).ready(function() {
-            console.log('idle');
             var idleTime = 0;
             $('.select2').select2();
             $('.select2.readonly').select2({
@@ -231,12 +230,19 @@ License: You must have a valid license purchased only from themeforest(the above
             });
             //Increment the idle time counter every minute.
 
+
             var with_timer = true;
 
+            // console.log(modul);
+
+            // if(modul =='video_call' || modul == 'video_call_reconnect' ){
+            //     with_timer = false;
+            // }
 
             if (with_timer) {
                 var idleInterval = setInterval(timerIncrement, 60000); // 1 minute
             }
+
 
             //Zero the idle timer on mouse movement.
             $(this).mousemove(function(e) {
@@ -247,11 +253,12 @@ License: You must have a valid license purchased only from themeforest(the above
                 idleTime = 0;
             });
 
+            console.log('tes');
 
             function timerIncrement() {
                 idleTime = idleTime + 1;
                 console.log(idleTime);
-                if (idleTime >= 30) { // 2 minutes
+                if (idleTime >= 10) { // 2 minutes
                     window.location.href = '<?= base_url('login/logout_idle') ?>';
                 }
             }

@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use CodeIgniter\Exceptions\PageNotFoundException;
 use Irsyadulibad\DataTables\DataTables;
 
 class User_role extends AdminController
@@ -32,7 +33,7 @@ class User_role extends AdminController
             return redirect()->to('/login');
         }
 
-        if (!$id || empty($this->akses[2])) show_404();
+        if (!$id || empty($this->akses[2])) throw PageNotFoundException::forPageNotFound();
 
         $data['menu_list'] = $this->m_menu->orderBy('tipe')->findAll();
 
@@ -85,7 +86,7 @@ class User_role extends AdminController
                 return redirect()->to('user_role');
             }
         } else {
-            show_404();
+            throw PageNotFoundException::forPageNotFound();
         }
     }
 
@@ -121,50 +122,56 @@ class User_role extends AdminController
         $data = @$this->request->getPost();
         // $data = $this->security->xss_clean($data);
         if ($data) {
-            if ($this->form_validation->run($data, 'store_user_role') == FALSE) {
+            $exist = $this->m_user_role->where('user_role', $data['user_role'])->first();
+            if (empty($exist)) {
+                if ($this->form_validation->run($data, 'store_user_role') == FALSE) {
 
-                $data['menu_list'] = $this->m_menu->findAll();
-                $this->session->setFlashdata('postdata', $data);
-                $this->session->setFlashdata('msg', warn_msg('User Role Name harus diisi.'));
-                return redirect()->to('user_role');
-            } else {
-                $data['menu_akses'] = $this->get_akses($data);
-
-                $wkt = date('Y-m-d H:i:s');
-                $db_data = array(
-                    'user_role' => $data['user_role'],
-                    'menu_akses' => $data['menu_akses'],
-                    'jenis' => '1',
-                    'created_at' => $wkt,
-                    'created_by' => session()->get('user_login_vgdc')['id_user'],
-                    'approval_tipe' => '1'
-                );
-
-                $proses = $this->m_user_role_temp->insert(@$db_data);
-
-                if ($proses) {
-                    $log = array('id_user' => session()->get('user_login_vgdc')['id_user'], 'aktivitas' => '5', 'tanggal' => date('Y-m-d'), 'waktu' => date('H:i:s'), 'keterangan' => 'Success create user role : ' . $data['user_role']);
-                    $this->m_log->insert($log);
-                    $this->session->setFlashdata('msg', succ_msg('Data User Role Baru Berhasil Ditambahkan. Mohon Tunggu Proses Approval Administrator.'));
+                    $data['menu_list'] = $this->m_menu->findAll();
+                    $this->session->setFlashdata('postdata', $data);
+                    $this->session->setFlashdata('msg', warn_msg('User Role Name harus diisi.'));
+                    return redirect()->to('user_role');
                 } else {
-                    $this->session->setFlashdata('msg', err_msg('Gagal menambahkan data.'));
-                }
+                    $data['menu_akses'] = $this->get_akses($data);
 
+                    $wkt = date('Y-m-d H:i:s');
+                    $db_data = array(
+                        'user_role' => $data['user_role'],
+                        'menu_akses' => $data['menu_akses'],
+                        'jenis' => '1',
+                        'created_at' => $wkt,
+                        'created_by' => session()->get('user_login_vgdc')['id_user'],
+                        'approval_tipe' => '1'
+                    );
+
+                    $proses = $this->m_user_role_temp->insert(@$db_data);
+
+                    if ($proses) {
+                        $log = array('id_user' => session()->get('user_login_vgdc')['id_user'], 'aktivitas' => '5', 'tanggal' => date('Y-m-d'), 'waktu' => date('H:i:s'), 'keterangan' => 'Success create user role : ' . $data['user_role']);
+                        $this->m_log->insert($log);
+                        $this->session->setFlashdata('msg', succ_msg('Data User Role Baru Berhasil Ditambahkan. Mohon Tunggu Proses Approval Administrator.'));
+                    } else {
+                        $this->session->setFlashdata('msg', err_msg('Gagal menambahkan data.'));
+                    }
+
+                    return redirect()->to('user_role');
+                }
+            } else {
+                $this->session->setFlashdata('msg', warn_msg('User Role Name sudah tersedia.'));
                 return redirect()->to('user_role');
             }
         } else {
-            show_404();
+            throw PageNotFoundException::forPageNotFound();
         }
     }
 
     function hapus($id = NULL)
     {
-        if (!$id) show_404();
+        if (!$id) throw PageNotFoundException::forPageNotFound();
 
         $data = $this->m_user_role->find(decode($id));
 
         if (empty($data)) {
-            show_404();
+            throw PageNotFoundException::forPageNotFound();
         }
 
         $nm = $data['user_role'];

@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use CodeIgniter\Exceptions\PageNotFoundException;
 use Irsyadulibad\DataTables\DataTables;
 
 class User extends AdminController
@@ -30,7 +31,7 @@ class User extends AdminController
         if (empty($this->user)) {
             return redirect()->to('/login');
         }
-        
+
         $data['akses']  = $this->akses;
         $data['user_temp'] = $this->m_user_temp->findAll();
         return view('user/approve', @$data);
@@ -111,7 +112,7 @@ class User extends AdminController
                 return redirect()->to('user');
             }
         } else {
-            show_404();
+            throw PageNotFoundException::forPageNotFound();
         }
 
         $this->templates->display('user/user');
@@ -190,17 +191,17 @@ class User extends AdminController
                 return redirect()->to('user');
             }
         } else {
-            show_404();
+            throw PageNotFoundException::forPageNotFound();
         }
     }
 
 
     function hapus($id = NULL)
     {
-        if (!$id) show_404();
+        if (!$id) throw PageNotFoundException::forPageNotFound();
         $data = $this->m_user->find(decode($id));
         if (empty($data)) {
-            show_404();
+            throw PageNotFoundException::forPageNotFound();
         }
 
         $nm = $data['nama'];

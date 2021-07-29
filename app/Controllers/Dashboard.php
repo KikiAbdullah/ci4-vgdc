@@ -334,8 +334,8 @@ class Dashboard extends AdminController
         // $tgl_akhir = changeDateFormat('database',@ $filter['tanggal_akhir']);
 
         if (!empty($filter['tanggal_awal']) && !empty($filter['tanggal_akhir'])) {
-            $this->db->where('tanggal >=', $tgl_awal . ' 00:00:00');
-            $this->db->where('tanggal <=', $tgl_akhir . ' 23:59:59');
+            $this->db->where('tanggal >=', $filter['tanggal_awal'] . ' 00:00:00');
+            $this->db->where('tanggal <=', $filter['tanggal_akhir'] . ' 23:59:59');
         }
 
         if (!empty($filter['id_layanan'])) {
