@@ -27,7 +27,7 @@ class AdminController extends BaseController
 {
     public function __construct()
     {
-
+        date_default_timezone_set('Asia/Jakarta');
         // load model
         $this->m_cs = new Cs();
         $this->m_dokumen = new Dokumen();

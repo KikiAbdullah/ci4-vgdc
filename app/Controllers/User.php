@@ -61,7 +61,11 @@ class User extends AdminController
             if ($this->form_validation->run($data, 'register') == FALSE) {
                 // mengembalikan nilai input yang sudah dimasukan sebelumnya
                 session()->setFlashdata('postdata', $this->request->getPost());
-                dd($this->form_validation->getErrors());
+                // dd($this->form_validation->getErrors());
+                $error = $this->form_validation->getErrors();
+                foreach ($error as $error_msg) {
+                    $this->session->setFlashdata('msg', warn_msg($error_msg));
+                }
                 // kembali ke halaman form
                 // $this->session->setFlashdata('msg', warn_msg($this->form_validation->getErrors()));
                 return redirect()->to('user');
@@ -133,7 +137,10 @@ class User extends AdminController
             if ($this->form_validation->run($data, 'update') == FALSE) {
                 // mengembalikan nilai input yang sudah dimasukan sebelumnya
                 session()->setFlashdata('postdata', $this->request->getPost());
-                dd($this->form_validation->getErrors());
+                $error = $this->form_validation->getErrors();
+                foreach ($error as $error_msg) {
+                    $this->session->setFlashdata('msg', warn_msg($error_msg));
+                }
                 // kembali ke halaman form
                 // $this->session->setFlashdata('msg', warn_msg($this->form_validation->getErrors()));
                 return redirect()->to('user');
@@ -352,5 +359,73 @@ class User extends AdminController
             $this->m_log->insert($log);
         }
         return redirect()->to('user');
+    }
+
+
+
+    //PROFILE
+    public function profile()
+    {
+        $data['user'] = $this->m_user->find($this->user['id_user']);
+        $data['user_role'] = $this->m_user_role->findAll();
+
+        return view('profile/index', $data);
+    }
+
+    public function do_ubah_profile()
+    {
+        $data = @$this->request->getPost();
+        $tgl1 = date('Y-m-d');
+
+        if ($data['password'] != '' && $data['confirm_password']) {
+
+            $datapass = $this->m_user_temp->select('password')
+                ->where('id_user', $data['id_user'])
+                ->orderBy('id_temp', 'desc')
+                ->findAll(5);
+
+            foreach ($datapass as $key => $v) {
+                if ($v['password'] == md5($data['password'])) {
+                    $this->session->setFlashdata('msg', warn_msg('Password sudah pernah digunakan.'));
+                    return redirect()->to('user/profile');
+                }
+            }
+
+
+            if ($data['password'] != $data['confirm_password']) {
+                $this->session->setFlashdata('postdata', (object)$this->input->post());
+                $this->session->setFlashdata('msg', warn_msg('Bidang <b>Password</b> dan <b>Confirm Password</b> tidak sama'));
+                return redirect()->to('user/profile');
+            }
+            $password = md5($data['password']);
+            $data['password'] = $password;
+            unset($data['confirm_password']);
+            $data['pwd_created'] = $tgl1;
+            $data['pwd_exp'] = date('Y-m-d', strtotime('+3 month', strtotime($tgl1)));
+        } else {
+            $passwordlama = $this->m_user->find($data['id_user'])['password'];
+
+            unset($data['confirm_password']);
+            $data['password'] = $passwordlama;
+        }
+        unset($data['ci_csrf_token']);
+        $datad['nama'] = $data['nama'];
+        $datad['email'] = $data['email'];
+        $data['modified_at'] = $tgl1;
+        $data['modified_by'] = $this->session->get('user_login_vgdc')['nama'];
+
+
+        $proses2 = $this->m_user->update($data['id_user'], @$datad);
+
+        if ($proses2) {
+
+            $log = array('id_user' => $this->session->get('user_login_vgdc')['id_user'], 'aktivitas' => '8', 'tanggal' => date('Y-m-d'), 'waktu' => date('H:i:s'), 'keterangan' => 'Success modify user : ' . $data['nama']);
+            $this->m_log->insert($log);
+
+            $this->session->setFlashdata('msg', succ_msg('Data berhasil diubah.'));
+        } else {
+            $this->session->setFlashdata('msg', err_msg('Gagal mengubah data.'));
+        }
+        return redirect()->to('user/profile');
     }
 }

@@ -27,6 +27,10 @@
                                 <!-- <br> -->
                                 &nbsp;
                                 <li>
+                                    <a href="<?= site_url('user/profile') ?>">
+                                        <i class="icon-user"></i> Profile </a>
+                                </li>
+                                <li>
                                     <a href="<?= site_url('login/logout') ?>">
                                         <i class="icon-key"></i> Log Out </a>
                                 </li>

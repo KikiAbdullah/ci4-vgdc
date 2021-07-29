@@ -117,8 +117,12 @@ class Kios extends AdminController
         if ($data) {
             if ($this->form_validation->run($data, 'update_kios') == FALSE) {
                 $this->session->setFlashdata('postdata', (object)$this->request->getPost());
-                dd($this->form_validation->getErrors());
+                // dd($this->form_validation->getErrors());
 
+                $error = $this->form_validation->getErrors();
+                foreach ($error as $error_msg) {
+                    $this->session->setFlashdata('msg', warn_msg($error_msg));
+                }
                 return redirect()->to('kios');
             } else {
                 if ($data['password'] != '' && $data['confirm_password']) {
