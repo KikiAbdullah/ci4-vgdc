@@ -157,18 +157,17 @@ class Service extends AdminController
 	}
 
 
-	// BELUM FILESNYA
 	public function transaksi_ns()
 	{
 		$hayo = @$_REQUEST['hayo'];
 
 		if (decode($hayo) == hayo()) {
-			$no_antrian = $this->m_transaksi->where('tanggal', '2020-05-03')->select('max(no_antrian) as no_antrian')->first()['no_antrian'];
+			$no_antrian = $this->m_transaksi->select('max(no_antrian) as no_antrian')->where('tanggal', date('Y-m-d'))->first()['no_antrian'];
 
 			if ($no_antrian != '') {
 				$no_antrianbaru = intval($no_antrian) + 1;
 			} else {
-				$no_antrianbaru = 1;
+				$no_antrianbaru    = 1;
 			}
 
 			$nm_driver = @$_REQUEST['nm_driver'];
@@ -177,65 +176,52 @@ class Service extends AdminController
 			$id_tipe = @$_REQUEST['id_tipe'];
 			$id_jenis = @$_REQUEST['id_jenis'];
 			$id_dok = @$_REQUEST['id_dok'];
-			//$sessionid = @$_REQUEST['sessionid'];
+			$sessionid = @$_REQUEST['sessionid'];
 
-			$param = array(
-				'nm_driver' 	=> $nm_driver,
-				'id_gdc'		=> $id_gdc,
-				'id_tipe'		=> $id_tipe,
-				'id_jenis'		=> $id_jenis,
-				'id_layanan'	=> $id_layanan,
-				'tanggal' => date('Y-m-d'),
-				'wkt_upload'  => date('H:i:s'),
-				'no_antrian' => $no_antrianbaru,
-				'sts_trx' => 1,
-			);
-			$this->m_transaksi->insert($param);
+			$param = [
+				"nm_driver" => $nm_driver,
+				"id_gdc" => $id_gdc,
+				"id_tipe" => $id_tipe,
+				"id_jenis" => $id_jenis,
+				"id_layanan" => $id_layanan,
+				"tanggal" => date('Y-m-d'),
+				"wkt_upload" => date('H:i:s'),
+				"no_antrian" => $no_antrianbaru,
+				"sts_trx" => 1,
+			];
+			$trx = $this->m_transaksi->insert($param);
 
-			$id_trx =  $this->m_transaksi->getInsertID();
+			$id_trx = $trx;
 
-			if (!empty(@$_FILES['file']['name'])) {
+			if (!empty($this->request->getFileMultiple('file'))) {
 
-				foreach ($_FILES['file']['name'] as $key => $value) {
-					$_FILES['file[]']['name'] = $_FILES['file']['name'][$key];
-					$_FILES['file[]']['type'] = $_FILES['file']['type'][$key];
-					$_FILES['file[]']['tmp_name'] = $_FILES['file']['tmp_name'][$key];
-					$_FILES['file[]']['error'] = $_FILES['file']['error'][$key];
-					$_FILES['file[]']['size'] = $_FILES['file']['size'][$key];
+				foreach ($this->request->getFileMultiple('file') as $key => $value) {
+					if (!empty($value)) {
+						$fileName = $value->getRandomName();
+						$save = $value->move(ROOTPATH . 'uploads/file/', $fileName);
 
-					$file_name = $_FILES['file']['name'][$key];
-					if (!empty($file_name)) {
+						$enc_file = ROOTPATH . 'uploads/file/' . $fileName;
+						$apikey = 'keykuy';
+						//$a = folder untuk menyimpan file yg sudah di decrypt
+						$a = ROOTPATH . 'uploads/file/dec/';
 
-						$config['upload_path'] = 'uploads/file';
-						$config['allowed_types'] = '*';
+						encryptFile($enc_file, $apikey, $enc_file . '.enc');
+						unlink($enc_file);
 
-						$new_name = $file_name;
-						$config['file_name'] = $new_name;
 
-						$this->load->library('upload', $config);
-						$this->upload->initialize($config);
-
-						if (!$this->upload->do_upload('file[]')) {
-
+						if (!$save) {
 							return json_encode(array('status' => 'gagal', 'msg' => 'upload file gagal'));
 						} else {
-							$dataFile  = $this->upload->data();
-							$file_name = $dataFile['file_name'];
-
-							$param = array(
-								'id_trx' => $id_trx,
-								'id_dok' => $id_dok[$key],
-								'attach' => $file_name
-							);
-							$this->m_file->insert($param);
+							$this->m_file->insert(array('sessionid' => $sessionid, 'id_trx' => $id_trx, 'id_dok' => $id_dok[$key], 'attach' => $fileName));
 						}
 					} else {
-						return json_encode(array('status' => 'gagal', 'msg' => 'File Not Found'));
+						return json_encode(array('status' => 'gagal', 'msg' => 'File tidak ditemukan '));
 					}
 				}
 			}
 
-			$data = $this->m_transaksi->where('tanggal', date('Y-m-d'))->orderBy('id_trx', 'desc')->first();
+			$data = $this->m_transaksi->where('tanggal', date('Y-m-d'))
+				->orderBy('id_trx', 'desc')->first();
 
 			return json_encode(array('status' => 'sukses', 'data' => $data));
 		} else {

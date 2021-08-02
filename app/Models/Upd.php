@@ -16,6 +16,7 @@ class Upd extends Model
 	protected $protectFields        = true;
 	protected $allowedFields        = [
 		'id_app',
+		'id_user',
 		'nm_app',
 		'version',
 		'tgl_update',

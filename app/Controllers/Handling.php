@@ -74,4 +74,28 @@ class Handling extends AdminController
         $this->session->remove('filter');
         return redirect()->to('handling');
     }
+
+    public function updates_selesai($id_trx, $tampil)
+    {
+        // $id_trx = @$_REQUEST['id_trx'];
+
+        $sts = 2;
+        $data = @$this->m_transaksi
+            ->where('id_trx', $id_trx)
+            ->where('sts_trx', $sts)
+            ->first();
+
+        $idtx = $data['id_trx'];
+        //echo json_encode(array('status' => 'sukses','data' => $data));
+
+        if (!empty($data)) {
+            $param_update = ['sts_trx' => 3, 'wkt_selesai' => date('H:i:s'), 'tampil' => $tampil];
+            $this->m_transaksi->update($idtx, $param_update);
+
+            // echo json_encode(array('status' => 'sukses', 'message' => 'OK', 'data_id_trx' => $idtx));
+            return redirect()->to('handling');
+        } else {
+            echo json_encode(array('status' => '404', 'message' => 'Not Found'));
+        }
+    }
 }
