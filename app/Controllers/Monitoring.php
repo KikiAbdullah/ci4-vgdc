@@ -41,7 +41,8 @@ class Monitoring extends AdminController
             ->join('gdc', 'gdc.id_gdc = log_gdc.id_gdcl', 'left')
             ->join('aktivitas_status', 'aktivitas_status.id_aktivitas = log_gdc.aktivitas', 'left')
             ->orderBy('tanggal', 'desc')
-            ->orderBy('waktu', 'desc');
+            ->orderBy('waktu', 'desc')
+            ->orderBy('id_log', 'desc');
 
         if (!empty($filter['tanggal_awal']) && !empty($filter['tanggal_akhir'])) {
             $dt_builder = $dt_builder->where(
