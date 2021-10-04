@@ -314,7 +314,7 @@
             var a = $(".ijen");
             console.log(a);
             a.each(function(e) {
-                this.click()
+                this.click();
 
             })
         });
@@ -374,9 +374,8 @@
                         str += '<div class="row tekan" style="cursor : pointer;" data-file="' + row.image + '"  >' +
                             // '<div class="col-md-10">'+
                             '<input type="hidden" class="id_trx" value="id_trx">' +
+                            '<a href="' + row.image + '" class="ijen" download="' + row.name + '">' +
                             '<img src="' + row.image + '" style="width : 100% ; height : 100%;" />' +
-
-                            '<a href="' + row.image + '" class="ijen" download>' +
                             '</a>' +
                             '</div>';
                     })

@@ -300,7 +300,7 @@ class Service extends AdminController
 				unlink($path);
 
 				$respone[] = array(
-					'name' => $value['nm_dok'],
+					'name' => $value['attach'],
 					'image' => $image
 				);
 			}
@@ -1091,20 +1091,22 @@ class Service extends AdminController
 	}
 
 
+	// view document
 	public function view_dokumen_ns()
 	{
 		$id_trx = @$_REQUEST['id_trx'];
 
-		$data = @$this->m_file->find($id_trx)['id_trx'];
+		$data = @$this->m_file->where('id_trx', $id_trx)->first()['id_trx'];
 
 		if (!empty($data)) {
-			$db_data = @$this->m_file->join('dokumen', 'file.id_dok=dokumen.id_dok', 'left')
-				->where('id_trx', $data)
-				->select('file.attach', 'id_trx', 'dokumen.nm_dok')->findAll();
 
+			$db_data = @$this->m_file->join('dokumen', 'file.id_dok = dokumen.id_dok', 'left')
+				->where('id_trx', $data)
+				->select('file.attach', 'id_trx', 'dokumen.nm_dok')
+				->findAll();
 			foreach ($db_data as $key => $value) {
 
-				$respone['image_' . $value->nm_dok] = base_url('uploads/file') . '/' . $value->attach;
+				$respone['image_' . $value['nm_dok']] = base_url('uploads/file') . '/' . $value['attach'];
 			}
 			echo stripslashes(json_encode($respone));
 		} else {
