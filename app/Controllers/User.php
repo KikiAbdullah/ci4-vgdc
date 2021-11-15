@@ -414,8 +414,7 @@ class User extends AdminController
         $data['modified_at'] = $tgl1;
         $data['modified_by'] = $this->session->get('user_login_vgdc')['nama'];
 
-
-        $proses2 = $this->m_user->update($data['id_user'], @$datad);
+        $proses2 = $this->m_user->update($data['id_user'], @$data);
 
         if ($proses2) {
 
