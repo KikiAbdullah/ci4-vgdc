@@ -215,6 +215,9 @@
                     data: "wkt_selesai"
                 },
                 {
+                    data: "nama_cs"
+                },
+                {
                     data: "sts_trx",
                     render: function(data, type, row) {
                         if (data == 2) {

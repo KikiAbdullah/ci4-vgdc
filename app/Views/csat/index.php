@@ -88,6 +88,7 @@
                     <th class="tengah">KiosK Location</th>
                     <th class="tengah">Start</th>
                     <th class="tengah">Finish</th>
+                    <th class="tengah">Agent</th>
                     <th class="tengah">CSAT</th>
                     <th class="tengah">Detail</th>
                 </tr>
@@ -153,6 +154,9 @@
                     data: "wkt_selesai"
                 },
                 {
+                    data: "nama_cs"
+                },
+                {
                     data: "id_csat",
                     render: function(data, type, row) {
                         if (data == 1) {
@@ -167,7 +171,7 @@
                         } else if (data == 5) {
                             return '<img src="<?= base_url('assets/upload/sangat-puas.png'); ?>" style="width: 30px;">';
                         } else {
-                            return '';
+                            return 'Tanpa CSAT';
                         }
                     }
                 },

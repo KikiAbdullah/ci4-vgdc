@@ -132,7 +132,10 @@ class User extends AdminController
     function do_ubah()
     {
         $data = @$this->request->getPost();
+
         // $data = $this->security->xss_clean($data);
+        unset($data['ci_csrf_token']);
+
         if ($data) {
             if ($this->form_validation->run($data, 'update') == FALSE) {
                 // mengembalikan nilai input yang sudah dimasukan sebelumnya
@@ -145,6 +148,7 @@ class User extends AdminController
                 // $this->session->setFlashdata('msg', warn_msg($this->form_validation->getErrors()));
                 return redirect()->to('user');
             } else {
+
                 if ($data['password'] != '' && $data['confirm_password']) {
 
                     $datapass = $this->m_user_temp->select('password')
@@ -161,7 +165,7 @@ class User extends AdminController
 
 
                     if ($data['password'] != $data['confirm_password']) {
-                        $this->session->setFlashdata('postdata', (object)$this->input->post());
+                        $this->session->setFlashdata('postdata', (object) @$this->request->getPost());
                         $this->session->setFlashdata('msg', warn_msg('Bidang <b>Password</b> dan <b>Confirm Password</b> tidak sama'));
                         return redirect()->to('user');
                     }
@@ -169,21 +173,25 @@ class User extends AdminController
                     $data['password'] = $password;
                     unset($data['confirm_password']);
                     $tgl1 = date('Y-m-d');
+                    $data['jml_login'] = 0;
                     $data['pwd_created'] = $tgl1;
                     $data['pwd_exp'] = date('Y-m-d', strtotime('+3 month', strtotime($tgl1)));
                 } else {
-                    $passwordlama = $this->m_user->find($data['id_user'])['password'];
+                    $data_old = $this->m_user->find($data['id_user']);
 
                     unset($data['confirm_password']);
-                    $data['password'] = $passwordlama;
+                    $data['password'] = $data_old['password'];
+                    $data['jml_login'] = $data_old['jml_login'];
+                    $data['pwd_created'] = $data_old['pwd_created'];
+                    $data['pwd_exp'] = $data_old['pwd_exp'];
                 }
-                unset($data['ci_csrf_token']);
                 $wkt = date('Y-m-d H:i:s');
                 $data['created_at'] = $wkt;
                 $data['created_by'] = $this->session->get('user_login_vgdc')['nama'];
                 $data['is_approved'] = 'N';
                 $data['approval_tipe'] = '2';
                 $data['is_done'] = 'N';
+                $data['status'] = ($data['status'] == 'on') ? 'Y' : 'N';
 
                 $proses2 = $this->m_user_temp->insert(@$data);
                 if ($proses2) {
@@ -393,7 +401,7 @@ class User extends AdminController
 
 
             if ($data['password'] != $data['confirm_password']) {
-                $this->session->setFlashdata('postdata', (object)$this->input->post());
+                $this->session->setFlashdata('postdata', (object)@$this->request->getPost());
                 $this->session->setFlashdata('msg', warn_msg('Bidang <b>Password</b> dan <b>Confirm Password</b> tidak sama'));
                 return redirect()->to('user/profile');
             }

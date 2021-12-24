@@ -250,12 +250,13 @@ class Service extends AdminController
 			$where2 = array('transaksi.id_layanan' => $filter['id_layanan']);
 		}
 
-		return DataTables::use('transaksi')->select('transaksi.*,  transaksi.id_trx, layanan.nm_layanan as nm_layanan,  timediff(wkt_selesai, wkt_mulai) as waktu, gdc.lokasi as lokasi, gdc.nm_gdc, jenis_driver.nm_jenis as nm_jenis, tipe_driver.nm_tipe as nm_tipe, csat.gambar, nm_driver, tanggal, tipe_driver.nm_tipe, wkt_mulai, wkt_selesai, sessionid, sts_trx ')
+		return DataTables::use('transaksi')->select('transaksi.*,  user.nama as nama_cs, layanan.nm_layanan as nm_layanan,  timediff(wkt_selesai, wkt_mulai) as waktu, gdc.lokasi as lokasi, gdc.nm_gdc, jenis_driver.nm_jenis as nm_jenis, tipe_driver.nm_tipe as nm_tipe, csat.gambar, nm_driver, tanggal, tipe_driver.nm_tipe, wkt_mulai, wkt_selesai, sessionid, sts_trx ')
 			->join('layanan', 'transaksi.id_layanan = layanan.id_layanan', 'left')
 			->join('gdc', 'transaksi.id_gdc = gdc.id_gdc', 'left')
 			->join('jenis_driver', 'transaksi.id_jenis = jenis_driver.id_jenis', 'left')
 			->join('tipe_driver', 'transaksi.id_tipe = tipe_driver.id_tipe', 'left')
 			->join('csat', 'transaksi.id_csat = csat.id_csat', 'left')
+			->join('user', 'transaksi.id_cs = user.id_user', 'left')
 			->where(@$where1)
 			->where(@$where2)
 			->orderBy('tanggal', 'desc')
@@ -264,7 +265,7 @@ class Service extends AdminController
 	}
 
 	// view document
-	public function view_dokumen($id_trx)
+	public function view_dokumen($id_trx = null)
 	{
 		if (empty($id_trx)) {
 			$id_trx = @$_REQUEST['id_trx'];
@@ -304,6 +305,7 @@ class Service extends AdminController
 					'image' => $image
 				);
 			}
+
 			echo stripslashes(json_encode(array('status' => '200', 'message' => 'OK', 'id_trx' => $value['id_trx'], 'data' => $respone), JSON_UNESCAPED_SLASHES));
 		} else {
 

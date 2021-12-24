@@ -57,7 +57,7 @@ class AdminController extends BaseController
 
 
 
-
+        
 
         $link = explode('/', uri_string(true));
 

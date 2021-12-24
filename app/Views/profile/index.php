@@ -54,9 +54,9 @@
                             <label class="control-label col-md-2" style="font-weight: bold;">Ganti Password</label>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-2" style="font-weight: bold;"><?= ucwords(str_replace('_', ' ', 'password')) ?></label>
+                            <label class="control-label col-md-2" style="font-weight: bold;"><?= ucwords(str_replace('_', ' ', 'password baru')) ?></label>
                             <div class="col-md-2" style="width: 70%;">
-                                <input class="form-control" type="password" name="password" placeholder="<?= ucwords(str_replace('_', ' ', 'password')) ?>" value="" />
+                                <input class="form-control" type="password" name="password" placeholder="<?= ucwords(str_replace('_', ' ', 'password baru')) ?>" value="" />
                             </div>
                         </div>
                         <div class="form-group">

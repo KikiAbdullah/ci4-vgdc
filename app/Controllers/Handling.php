@@ -56,7 +56,7 @@ class Handling extends AdminController
             $where2 = array('transaksi.id_layanan' => $filter['id_layanan']);
         }
 
-        return DataTables::use('transaksi')->select('transaksi.*,  transaksi.id_trx, layanan.nm_layanan as nm_layanan,  timediff(wkt_selesai, wkt_mulai) as waktu, gdc.lokasi as lokasi, gdc.nm_gdc, jenis_driver.nm_jenis as nm_jenis, tipe_driver.nm_tipe as nm_tipe, csat.gambar, nm_driver, tanggal, tipe_driver.nm_tipe, wkt_mulai, wkt_selesai, sessionid, sts_trx ')
+        return DataTables::use('transaksi')->select('transaksi.*,  transaksi.id_trx, layanan.nm_layanan as nm_layanan,  timediff(wkt_selesai, wkt_mulai) as waktu, gdc.lokasi as lokasi, gdc.nm_gdc, jenis_driver.nm_jenis as nm_jenis, tipe_driver.nm_tipe as nm_tipe, csat.gambar, nm_driver, tanggal, tipe_driver.nm_tipe, wkt_mulai, wkt_selesai, sessionid, sts_trx,user.nama as nama_cs,')
             ->orderBy('tanggal', 'desc')
             ->orderBy('wkt_mulai', 'desc')
             ->join('layanan', 'transaksi.id_layanan = layanan.id_layanan', 'left')
@@ -64,6 +64,7 @@ class Handling extends AdminController
             ->join('jenis_driver', 'transaksi.id_jenis = jenis_driver.id_jenis', 'left')
             ->join('tipe_driver', 'transaksi.id_tipe = tipe_driver.id_tipe', 'left')
             ->join('csat', 'transaksi.id_csat = csat.id_csat', 'left')
+            ->join('user','user.id_user = transaksi.id_cs')
             ->where(@$where1)
             ->where(@$where2)
             ->make(true);
@@ -89,7 +90,12 @@ class Handling extends AdminController
         //echo json_encode(array('status' => 'sukses','data' => $data));
 
         if (!empty($data)) {
-            $param_update = ['sts_trx' => 3, 'wkt_selesai' => date('H:i:s'), 'tampil' => $tampil];
+            $param_update = [
+                'sts_trx' => 3,
+                'wkt_selesai' => date('H:i:s'),
+                'tampil' => $tampil,
+                'id_cs' => $this->user['id_user']
+            ];
             $this->m_transaksi->update($idtx, $param_update);
 
             // echo json_encode(array('status' => 'sukses', 'message' => 'OK', 'data_id_trx' => $idtx));

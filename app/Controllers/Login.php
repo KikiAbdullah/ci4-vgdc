@@ -67,7 +67,7 @@ class Login extends BaseController
                 $tgls = new DateTime();
                 $selisih = $tgls->diff($tgly)->days;
 
-                $this->session->setFlashdata('msg', warn_msg(' Anda Berhasil Login. Masa berlaku password Anda tinggal ' . $selisih . ' hari.'));
+                $this->session->setFlashdata('msg', warn_msg('Anda Berhasil Login. Masa berlaku password Anda tinggal ' . $selisih . ' hari.'));
                 $this->generate_menu($cek);
                 $this->session->set('user_login_vgdc', $cek);
 

@@ -114,7 +114,7 @@ class Csat extends AdminController
             $spreadsheet->getActiveSheet()->setCellValue('C' . $i, empty($t['nm_driver']) ? '-' : $t['nm_driver']);
             $spreadsheet->getActiveSheet()->setCellValue('D' . $i, empty($t['nm_jenis']) ? '-' : $t['nm_jenis']);
             $spreadsheet->getActiveSheet()->setCellValue('E' . $i, empty($t['nm_layanan']) ? '-' : $t['nm_layanan']);
-            $spreadsheet->getActiveSheet()->setCellValue('F' . $i, empty($t['nm_cs']) ? '-' : $t['nm_cs']);
+            $spreadsheet->getActiveSheet()->setCellValue('F' . $i, empty($t['nama_cs']) ? '-' : $t['nama_cs']);
             $spreadsheet->getActiveSheet()->setCellValue('G' . $i, empty($t['nm_gdc']) ? '-' : $t['nm_gdc']);
             $spreadsheet->getActiveSheet()->setCellValue('H' . $i, empty($t['wkt_mulai']) ? '-' : $t['wkt_mulai']);
             $spreadsheet->getActiveSheet()->setCellValue('I' . $i, empty($t['wkt_selesai']) ? '-' : $t['wkt_selesai']);
@@ -184,8 +184,8 @@ class Csat extends AdminController
 
         $filter = $this->session->get('filter');
 
-        $data = $this->m_transaksi->select('sessionid, id_trx, tanggal, nm_driver, wkt_upload, wkt_mulai, wkt_selesai, nm_layanan, nm_gdc, lokasi, id_csat, transaksi.sts_trx, nm_cs, nm_jenis')
-            ->join('cs', 'cs.id_cs = transaksi.id_cs', 'left')
+        $data = $this->m_transaksi->select('sessionid, id_trx, tanggal, nm_driver, wkt_upload, wkt_mulai, wkt_selesai, nm_layanan, nm_gdc, lokasi, id_csat, transaksi.sts_trx, user.nama as nama_cs, nm_jenis')
+            ->join('user', 'transaksi.id_cs = user.id_user', 'left')
             ->join('layanan', 'transaksi.id_layanan = layanan.id_layanan', 'left')
             ->join('gdc', 'transaksi.id_gdc = gdc.id_gdc', 'left')
             ->join('jenis_driver', 'transaksi.id_tipe = jenis_driver.id_jenis', 'left');
